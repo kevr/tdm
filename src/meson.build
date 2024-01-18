@@ -1,5 +1,6 @@
 sources = [
   'main.cpp',
+  'app.cpp',
 ]
 
 ncurses = dependency('curses')

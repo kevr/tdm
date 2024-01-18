@@ -1,6 +1,6 @@
-#include <iostream>
+#include "app.h"
 #include <format>
-using std::cout;
+#include <iostream>
 using std::cerr;
 using std::endl;
 
@@ -12,6 +12,6 @@ int main(int argc, char **argv)
         cerr << std::format("{} takes no arguments.", argv[0]) << endl;
         return 1;
     }
-    cout << std::format("This is project {}.", PROJECT_NAME) << endl;
-    return 0;
+    auto app = App();
+    return app.run();
 }
