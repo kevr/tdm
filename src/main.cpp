@@ -1,4 +1,5 @@
 #include "app.h"
+#include "lib/curses.h"
 #include "util/termio.h"
 #include <format>
 #include <iostream>

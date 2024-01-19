@@ -1,17 +1,16 @@
 #include "app.h"
-#include <curses.h>
+#include "lib/curses.h"
 
 int App::run(void)
 {
-    initscr();
-    m_init = true;
+    m_init = tdm::curses->initscr() != nullptr;
     return 0;
 }
 
 App::~App(void)
 {
     if (m_init) {
-        endwin();
+        tdm::curses->endwin();
         m_init = false;
     }
 }
