@@ -1,5 +1,6 @@
 sources = [
   'app.cpp',
+  'util/termio.cpp',
 ]
 
 gtest_proj = subproject('gtest')
@@ -14,6 +15,9 @@ test_lib = static_library('test_lib',
 test_dep = declare_dependency(
   link_with : [test_lib])
 test_deps = [test_dep, curses, gtest, gtest_main]
+
+# Recurse into util
+subdir('util')
 
 # tests
 main_test = executable('main_test',

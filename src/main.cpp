@@ -1,17 +1,18 @@
 #include "app.h"
+#include "util/termio.h"
 #include <format>
 #include <iostream>
-using std::cerr;
-using std::endl;
 
 #define PROJECT_NAME "tdm"
+#define PROJECT_VER "0.1"
 
 int main(int argc, char **argv)
 {
     if (argc != 1) {
-        cerr << std::format("{} takes no arguments.", argv[0]) << endl;
-        return 1;
+        return tdm::error(1, "{} takes no arguments.\n", argv[0]);
     }
+
+    tdm::print("{} {}\n", PROJECT_NAME, PROJECT_VER);
     auto app = App();
     return app.run();
 }
