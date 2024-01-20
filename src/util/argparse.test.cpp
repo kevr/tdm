@@ -12,7 +12,7 @@ TEST(argparse, unknown_option)
     };
     auto args = Args(opts);
 
-    EXPECT_EQ(args.parse(argc, const_cast<char **>(argv)), 1);
+    EXPECT_EQ(args.parse(argc, argv), 1);
 }
 
 TEST(argparse, option_with_argument)
@@ -26,6 +26,6 @@ TEST(argparse, option_with_argument)
     };
     auto args = Args(opts);
 
-    EXPECT_EQ(args.parse(argc, const_cast<char **>(argv)), 0);
+    EXPECT_EQ(args.parse(argc, argv), 0);
     EXPECT_EQ(args.get("arg"), "test");
 }

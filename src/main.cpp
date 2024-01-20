@@ -8,7 +8,7 @@
 #define PROJECT_NAME "tdm"
 #define PROJECT_VER "0.1"
 
-int main(int argc, char **argv)
+int main(int argc, const char *argv[])
 {
     static struct option opts[] = {
         // Long-only option (--option):

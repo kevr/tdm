@@ -42,7 +42,7 @@ class Args
 
   public:
     //! Parse command-line arguments
-    int parse(int argc, char **argv);
+    int parse(int argc, const char **argv);
 
     //! Check if an option was parsed
     bool has(const std::string &opt) const;

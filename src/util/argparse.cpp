@@ -6,7 +6,7 @@ using namespace tdm;
 
 Args::Args(struct option *options) : m_options(options) {}
 
-int Args::parse(int argc, char **argv)
+int Args::parse(int argc, const char **argv)
 {
     // Clear out m_values in case these args were previously parsed
     m_values.clear();
@@ -35,8 +35,9 @@ int Args::parse(int argc, char **argv)
     }
 
     int idx = 0;
+    char **argv_ = const_cast<char **>(argv);
     auto get_option = [&] {
-        return getopt_long(argc, argv, getopt_fmt.c_str(), m_options, &idx);
+        return getopt_long(argc, argv_, getopt_fmt.c_str(), m_options, &idx);
     };
 
     int c = 0;
