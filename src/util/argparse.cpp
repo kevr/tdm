@@ -41,9 +41,7 @@ int Args::parse(int argc, char **argv)
 
     int c = 0;
     while ((c = get_option()) != -1) {
-        if (c == 0) {
-            continue;
-        } else if (c == '?') {
+        if (c == '?') {
             // If the argument given is an unknown option,
             // return an error to the caller.
             return 1;
