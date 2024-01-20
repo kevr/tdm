@@ -1,6 +1,7 @@
 #include "argparse.h"
 #include "termio.h"
-#include <set>
+#include <algorithm>
+#include <sstream>
 using namespace tdm;
 
 Args::Args(struct option *options) : m_options(options) {}
@@ -74,4 +75,53 @@ bool Args::has(const std::string &opt) const
     return m_values.find(opt) != m_values.end();
 }
 
+Args &Args::describe(std::string option_name, std::string desc)
+{
+    return describe_formatted(std::format("--{}", option_name),
+                              std::move(desc));
+}
+
+Args &Args::describe(std::string option_name, char short_name, std::string desc)
+{
+    return describe_formatted(std::format("-{}, --{}", short_name, option_name),
+                              std::move(desc));
+}
+
+std::string Args::help(void) const
+{
+    // Try to find the description element with the longest key.
+    // This will be needed to calculate the proper padding for
+    // each option display.
+    auto longest =
+        std::max_element(m_desc.begin(), m_desc.end(), [](auto &a, auto &b) {
+            return a.first.size() < b.first.size();
+        });
+
+    // Defaulted to 0, max_len is set to the length of the longest
+    // element if found.
+    std::size_t max_len = 0;
+    if (longest != m_desc.end()) {
+        max_len = longest->first.size();
+    }
+
+    std::stringstream ss;
+    ss << usage << "\n\nProgram options:\n";
+
+    const std::string indent(2, ' ');
+    const char *sep = "\u2022"; // UTF-8 Bullet
+    for (auto &kv : m_desc) {
+        std::size_t padding = max_len - kv.first.size();
+        ss << indent << kv.first << std::string(padding, ' ') << indent << sep
+           << ' ' << kv.second << '\n';
+    }
+
+    return ss.str();
+}
+
 void Args::reset_getopt(void) { optind = 0; }
+
+Args &Args::describe_formatted(std::string option, std::string desc)
+{
+    m_desc.emplace_back(std::move(option), std::move(desc));
+    return *this;
+}

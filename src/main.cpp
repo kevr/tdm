@@ -11,22 +11,26 @@
 int main(int argc, char **argv)
 {
     static struct option opts[] = {
-        // Long-only option (--version):
+        // Long-only option (--option):
         {"version", no_argument, nullptr, OPT_LONG},
 
-        // Long & short option (--verbose, -v):
-        // {"verbose", no_argument, nullptr, 'v'},
+        // Long & short option (--option, -o):
+        {"help", no_argument, nullptr, 'h'},
 
         // End of array
         {nullptr, 0, nullptr, 0},
     };
 
-    auto args = tdm::Args(opts);
+    auto args = tdm::Args(opts)
+                    .describe("help", 'h', "Print this help summary")
+                    .describe("version", "Print the program version");
     if (int rc = args.parse(argc, argv)) {
         return rc;
     }
 
-    if (args.has("version")) {
+    if (args.has("help")) {
+        return tdm::print("{}\n", args.help());
+    } else if (args.has("version")) {
         return tdm::print("{}\n", PROJECT_VER);
     }
 

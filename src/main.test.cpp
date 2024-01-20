@@ -16,6 +16,37 @@ TEST(main, runs)
     EXPECT_EQ(tdm_main(argc, const_cast<char **>(argv)), F_OK);
 }
 
+TEST(main, help)
+{
+    int argc = 2;
+    const char *argv[] = {"tdm", "--help"};
+
+    CaptureStdout();
+    EXPECT_EQ(tdm_main(argc, const_cast<char **>(argv)), F_OK);
+    auto output = GetCapturedStdout();
+    EXPECT_NE(output.find(tdm::Args::usage), std::string::npos);
+    EXPECT_NE(output.find("-h, --help"), std::string::npos);
+    EXPECT_NE(output.find("--version"), std::string::npos);
+}
+
+TEST(main, help_short)
+{
+    // Test that output from `tdm -h` matches `tdm --help`
+    int argc = 2;
+    const char *argv[] = {"tdm", "--help"};
+
+    CaptureStdout();
+    EXPECT_EQ(tdm_main(argc, const_cast<char **>(argv)), F_OK);
+    auto help_output = GetCapturedStdout();
+
+    argv[1] = "-h";
+    CaptureStdout();
+    EXPECT_EQ(tdm_main(argc, const_cast<char **>(argv)), F_OK);
+    auto h_output = GetCapturedStdout();
+
+    EXPECT_EQ(help_output, h_output);
+}
+
 TEST(main, version)
 {
     int argc = 2;
@@ -31,6 +62,7 @@ TEST(main, gracefully_fails)
 {
     int argc = 2;
     const char *argv[] = {"tdm", "test"};
+
     CaptureStderr();
     EXPECT_EQ(tdm_main(argc, const_cast<char **>(argv)), 1);
     auto output = GetCapturedStderr();
