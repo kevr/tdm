@@ -2,8 +2,6 @@
 #include "lib/curses.h"
 #include "util/argparse.h"
 #include "util/termio.h"
-#include <format>
-#include <iostream>
 
 #define PROJECT_NAME "tdm"
 #define PROJECT_VER "0.1"
