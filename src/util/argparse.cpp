@@ -86,6 +86,20 @@ Args &Args::describe(std::string option_name, char short_name, std::string desc)
                               std::move(desc));
 }
 
+Args &Args::describe(std::string option_name, char short_name, std::string arg,
+                     std::string desc)
+{
+    return describe_formatted(
+        std::format("-{}, --{} {}", short_name, option_name, arg),
+        std::move(desc));
+}
+
+Args &Args::option_default(std::string name, std::string default_value)
+{
+    m_defaults[name] = default_value;
+    return *this;
+}
+
 std::string Args::help(void) const
 {
     // Try to find the description element with the longest key.

@@ -29,3 +29,18 @@ TEST(argparse, option_with_argument)
     EXPECT_EQ(args.parse(argc, argv), 0);
     EXPECT_EQ(args.get("arg"), "test");
 }
+
+TEST(argparse, defaults)
+{
+    int argc = 1;
+    const char *argv[] = {"tdm"};
+
+    struct option opts[] = {
+        {"arg", required_argument, nullptr, 'a'},
+        {nullptr, 0, nullptr, 0},
+    };
+    auto args = Args(opts).option_default("arg", "test");
+
+    EXPECT_EQ(args.parse(argc, argv), 0);
+    EXPECT_EQ(args.get("arg"), "test");
+}
