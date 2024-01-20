@@ -34,4 +34,28 @@ std::string &strip(std::string &str)
     return rstrip(str);
 }
 
+std::vector<std::string> split(const std::string &str,
+                               const std::string &delimiter,
+                               std::size_t max_splits)
+{
+    std::vector<std::string> output;
+
+    std::size_t i = 0, o = 0;
+    i = str.find(delimiter, o);
+    for (std::size_t splits = 0;
+         (!max_splits || splits < max_splits) && i != std::string::npos;
+         ++splits) {
+        output.emplace_back(str.substr(o, i - o));
+        o = i + 1;
+        i = str.find(delimiter, o);
+    }
+
+    std::string last(str.substr(o, str.size() - o));
+    if (last.size()) {
+        output.emplace_back(str.substr(o, str.size() - o));
+    }
+
+    return output;
+}
+
 }; // namespace tdm
