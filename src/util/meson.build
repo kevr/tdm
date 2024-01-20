@@ -8,6 +8,11 @@ logger_test = executable('logger_test',
   dependencies : test_deps)
 test('logger test', logger_test)
 
+str_test = executable('str_test',
+  'str.test.cpp',
+  dependencies : test_deps)
+test('str test', str_test)
+
 termio_test = executable('termio_test',
   'termio.test.cpp',
   dependencies : test_deps)

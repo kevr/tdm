@@ -3,6 +3,7 @@ sources = [
   'lib/curses.cpp',
   'util/logger.cpp',
   'util/argparse.cpp',
+  'util/str.cpp',
   'util/termio.cpp',
 ]
 
