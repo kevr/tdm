@@ -11,9 +11,10 @@ void print_s(std::ostream &os, const std::string &str);
 
 /*! Print a formatted string to std::cout */
 template <typename... Args>
-void print(std::format_string<Args...> fmt, Args &&...args)
+int print(std::format_string<Args...> fmt, Args &&...args)
 {
     print_s(std::cout, std::format(fmt, std::forward<Args>(args)...));
+    return 0;
 }
 
 /*! Print a formatted string to std::cerr */

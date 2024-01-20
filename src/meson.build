@@ -1,6 +1,7 @@
 sources = [
   'app.cpp',
   'lib/curses.cpp',
+  'util/argparse.cpp',
   'util/termio.cpp',
 ]
 

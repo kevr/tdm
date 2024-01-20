@@ -1,5 +1,6 @@
 #include "app.h"
 #include "lib/curses.h"
+#include "util/argparse.h"
 #include "util/termio.h"
 #include <format>
 #include <iostream>
@@ -9,11 +10,26 @@
 
 int main(int argc, char **argv)
 {
-    if (argc != 1) {
-        return tdm::error(1, "{} takes no arguments.\n", argv[0]);
+    static struct option opts[] = {
+        // Long-only option (--version):
+        {"version", no_argument, nullptr, OPT_LONG},
+
+        // Long & short option (--verbose, -v):
+        // {"verbose", no_argument, nullptr, 'v'},
+
+        // End of array
+        {nullptr, 0, nullptr, 0},
+    };
+
+    auto args = tdm::Args(opts);
+    if (int rc = args.parse(argc, argv)) {
+        return rc;
     }
 
-    tdm::print("{} {}\n", PROJECT_NAME, PROJECT_VER);
+    if (args.has("version")) {
+        return tdm::print("{}\n", PROJECT_VER);
+    }
+
     auto app = App();
     return app.run();
 }
