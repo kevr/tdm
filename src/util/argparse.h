@@ -44,6 +44,9 @@ class Args
     {
         return Convert<T>::cast(m_values.at(opt));
     }
+
+  private:
+    void reset_getopt(void);
 };
 
 }; // namespace tdm

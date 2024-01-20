@@ -9,6 +9,7 @@ int Args::parse(int argc, char **argv)
 {
     // Clear out m_values in case these args were previously parsed
     m_values.clear();
+    reset_getopt();
 
     std::map<int, int> short_opts;
     std::string getopt_fmt;
@@ -72,3 +73,5 @@ bool Args::has(const std::string &opt) const
 {
     return m_values.find(opt) != m_values.end();
 }
+
+void Args::reset_getopt(void) { optind = 0; }
