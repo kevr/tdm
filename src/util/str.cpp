@@ -28,11 +28,7 @@ std::string &rstrip(std::string &str)
     return strip_at(str, str.size() - 1, -1);
 }
 
-std::string &strip(std::string &str)
-{
-    lstrip(str);
-    return rstrip(str);
-}
+std::string &strip(std::string &str) { return rstrip(lstrip(str)); }
 
 std::vector<std::string> split(const std::string &str,
                                const std::string &delimiter,
