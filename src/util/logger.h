@@ -12,9 +12,10 @@ namespace tdm {
 class Logger
 {
   private:
-    inline static std::ostream *m_os = &std::cout;
-    inline static std::ofstream m_ofs;
-    inline static std::mutex m_mutex;
+    static std::ostream *m_os;
+    static std::ofstream m_ofs;
+    static std::mutex m_mutex;
+    static bool m_debug;
 
   private:
     std::string m_name;
@@ -30,6 +31,16 @@ class Logger
     int info(std::format_string<Args...> fmt, Args &&...args)
     {
         return write("INFO", std::move(fmt), std::forward<Args>(args)...);
+    }
+
+    Logger &verbose(bool enabled);
+
+    template <typename... Args>
+    int debug(std::format_string<Args...> fmt, Args &&...args)
+    {
+        return m_debug
+                   ? write("DEBUG", std::move(fmt), std::forward<Args>(args)...)
+                   : 0;
     }
 
     template <typename... Args>

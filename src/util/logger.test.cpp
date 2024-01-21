@@ -9,7 +9,13 @@ using testing::internal::GetCapturedStdout;
 class LoggerTest : public testing::Test
 {
   public:
-    void SetUp(void) { CaptureStdout(); }
+    void SetUp(void)
+    {
+        logger.verbose(true);
+        CaptureStdout();
+    }
+
+    void TearDown(void) { logger.verbose(false); }
 };
 
 TEST_F(LoggerTest, info)
@@ -17,6 +23,13 @@ TEST_F(LoggerTest, info)
     logger.info("test");
     auto output = GetCapturedStdout();
     EXPECT_EQ(output, "[INFO:root] test\n");
+}
+
+TEST_F(LoggerTest, debug)
+{
+    logger.debug("test");
+    auto output = GetCapturedStdout();
+    EXPECT_EQ(output, "[DEBUG:root] test\n");
 }
 
 TEST_F(LoggerTest, warning)
@@ -37,6 +50,16 @@ TEST_F(LoggerTest, open_gracefully_fails)
 {
     EXPECT_FALSE(logger.open("/dev/fake"));
     GetCapturedStdout();
+}
+
+TEST(logger, debug_noop)
+{
+    // When logger.verbose() is not used to enable verbosity,
+    // Logger::debug should noop.
+    CaptureStdout();
+    logger.debug("test");
+    auto output = GetCapturedStdout();
+    EXPECT_EQ(output, "");
 }
 
 TEST(logger, open_resets) { EXPECT_TRUE(logger.open()); }

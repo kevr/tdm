@@ -1,6 +1,19 @@
 #include "logger.h"
 using namespace tdm;
 
+// Default Logger output stream is std::cout
+std::ostream *Logger::m_os = &std::cout;
+std::ofstream Logger::m_ofs;
+std::mutex Logger::m_mutex;
+// Verbose logging is disabled by default
+bool Logger::m_debug = false;
+
+Logger &Logger::verbose(bool enabled)
+{
+    m_debug = enabled;
+    return *this;
+}
+
 bool Logger::open(std::filesystem::path logfile)
 {
     m_ofs.close();
