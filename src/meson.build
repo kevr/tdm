@@ -1,6 +1,7 @@
 sources = [
   'app.cpp',
   'lib/curses.cpp',
+  'freedesktop/desktop.cpp',
   'util/logger.cpp',
   'util/argparse.cpp',
   'util/str.cpp',
@@ -25,6 +26,7 @@ test_deps = [test_dep, gtest, gtest_main]
 
 # Recurse into util
 subdir('util')
+subdir('freedesktop')
 
 # tests
 main_test = executable('main_test',
