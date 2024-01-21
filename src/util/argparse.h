@@ -52,13 +52,13 @@ class Args
 
     //! Get an option's value
     template <typename T = std::string>
-    T get(const std::string &opt) const
+    const T &get(const std::string &opt) const
     {
         auto it = m_values.find(opt);
         if (it != m_values.end()) {
-            return Convert<T>::cast(it->second);
+            return Convert<const T &>::cast(it->second);
         }
-        return Convert<T>::cast(m_defaults.at(opt));
+        return Convert<const T &>::cast(m_defaults.at(opt));
     }
 
     //! Describe a long option
