@@ -17,7 +17,7 @@ int main(int argc, const char *argv[])
 
         // Long & short option (--option, -o):
         {"help", no_argument, nullptr, 'h'},
-
+        {"verbose", no_argument, nullptr, 'v'},
         {"log-to", required_argument, nullptr, 'l'},
 
         // End of array
@@ -27,6 +27,7 @@ int main(int argc, const char *argv[])
     auto args = tdm::Args(opts)
                     .describe("version", "Print the program version")
                     .describe("help", 'h', "Print this help summary")
+                    .describe("verbose", 'v', "Enable verbose logging")
                     .describe("log-to", 'l', "PATH",
                               "Path to log file [default: stdout]");
     if (int rc = args.parse(argc, argv)) {
@@ -47,6 +48,9 @@ int main(int argc, const char *argv[])
             tdm::print("started logging to '{}'\n", logfile);
         }
     }
+
+    // Enable verbose logging if --verbose provided
+    logger.verbose(args.has("verbose"));
 
     auto app = App();
     return app.run();
