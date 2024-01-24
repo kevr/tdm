@@ -1,7 +1,9 @@
 sources = [
   'app.cpp',
   'lib/curses.cpp',
+  'lib/sys.cpp',
   'freedesktop/desktop.cpp',
+  'sys/passwd.cpp',
   'util/logger.cpp',
   'util/argparse.cpp',
   'util/str.cpp',
@@ -11,6 +13,7 @@ sources = [
 gtest_proj = subproject('gtest')
 gtest = gtest_proj.get_variable('gtest_dep')
 gtest_main = gtest_proj.get_variable('gtest_main_dep')
+gmock = gtest_proj.get_variable('gmock_dep')
 
 # static lib shared between tests
 test_sources = [
@@ -21,11 +24,12 @@ test_lib = static_library('test_lib',
   cpp_args : '-DTEST')
 test_dep = declare_dependency(
   link_with : [test_lib])
-test_deps = [test_dep, gtest, gtest_main]
+test_deps = [test_dep, gtest, gmock, gtest_main]
 
 
 # Recurse into util
 subdir('util')
+subdir('sys')
 subdir('freedesktop')
 
 # tests
