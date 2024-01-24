@@ -1,11 +1,11 @@
 sources = [
   'app.cpp',
+  'freedesktop/desktop.cpp',
   'lib/curses.cpp',
   'lib/sys.cpp',
-  'freedesktop/desktop.cpp',
   'sys/passwd.cpp',
-  'util/logger.cpp',
   'util/argparse.cpp',
+  'util/logger.cpp',
   'util/str.cpp',
   'util/termio.cpp',
 ]
