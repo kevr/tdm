@@ -1,6 +1,8 @@
 #ifndef SINGLETON_H
 #define SINGLETON_H
 
+#include <memory>
+
 namespace tdm {
 
 template <typename T>
@@ -8,24 +10,24 @@ class Singleton
 {
   private:
     inline static T m_root;
-    inline static T &m_ref = m_root;
+    inline static T *m_ptr = &m_root;
 
   public:
-    T &ref(void) { return m_ref; }
+    T *ptr(void) { return m_ptr; }
 
-    T &set(T &other)
+    Singleton &set(std::shared_ptr<T> other)
     {
-        m_ref = other;
-        return ref();
+        m_ptr = other.get();
+        return *this;
     }
 
-    T &reset(void)
+    Singleton &reset(void)
     {
-        m_ref = m_root;
-        return ref();
+        m_ptr = &m_root;
+        return *this;
     }
 
-    T *operator->(void) { return &m_ref; }
+    T *operator->(void) { return m_ptr; }
 };
 
 }; // namespace tdm
