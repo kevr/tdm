@@ -3,6 +3,11 @@ argparse_test = executable('argparse_test',
   dependencies : test_deps)
 test('argparse test', argparse_test)
 
+env_test = executable('env_test',
+  'env.test.cpp',
+  dependencies : test_deps)
+test('env test', env_test)
+
 filesystem_test = executable('filesystem_test',
   'filesystem.test.cpp',
   dependencies : test_deps)

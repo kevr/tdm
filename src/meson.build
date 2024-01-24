@@ -5,6 +5,7 @@ sources = [
   'lib/sys.cpp',
   'sys/passwd.cpp',
   'util/argparse.cpp',
+  'util/env.cpp',
   'util/filesystem.cpp',
   'util/logger.cpp',
   'util/str.cpp',
