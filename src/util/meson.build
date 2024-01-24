@@ -3,6 +3,11 @@ argparse_test = executable('argparse_test',
   dependencies : test_deps)
 test('argparse test', argparse_test)
 
+filesystem_test = executable('filesystem_test',
+  'filesystem.test.cpp',
+  dependencies : test_deps)
+test('filesystem test', filesystem_test)
+
 logger_test = executable('logger_test',
   'logger.test.cpp',
   dependencies : test_deps)
