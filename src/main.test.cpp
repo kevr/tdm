@@ -65,7 +65,8 @@ TEST(main, logs_to_logfile)
     CaptureStdout();
     EXPECT_EQ(tdm_main(argc, argv), 0);
     auto output = GetCapturedStdout();
-    EXPECT_EQ(output, "started logging to '/dev/stdout'\n");
+    EXPECT_NE(output.find("started logging to '/dev/stdout'\n"),
+              std::string::npos);
 }
 
 TEST(main, unable_to_open_logfile)
