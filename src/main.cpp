@@ -41,7 +41,7 @@ int main(int argc, const char *argv[])
     }
 
     if (args.has("log-to")) {
-        auto logfile = args.get("log-to");
+        const auto &logfile = args.get("log-to");
         if (!logger.open(logfile)) {
             return tdm::error(1, "unable to open '{}' for writing\n", logfile);
         } else {
