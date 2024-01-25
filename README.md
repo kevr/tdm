@@ -6,16 +6,41 @@ A simple desktop manager with a textual login dialog.
 
 (1) Setup a build directory with meson:
 
-    $ meson setup build && cd build
+    $ meson setup [-Db_coverage=true] build
 
 (2) Compile the application using `samu` or `ninja`:
 
-    $ samu
+    $ ninja -C build
 
 ## Usage
 
-After [compiling](#compilation)...
+After [compilation](#compilation), execute the resulting `tdm` binary:
 
-Execute the resulting `tdm` executable:
+    $ ./build/src/tdm
 
-    $ ./src/tdm
+## Running tests
+
+After [compilation](#compilation), tests can be run through the `test` target:
+
+    $ ninja -C build test
+
+## Test coverage
+
+To configure [compilation](#compilation) for test coverage, include the
+`-Db_coverage=true` flag:
+
+    $ meson setup -Db_coverage=true build
+
+After [running tests](#running-tests), coverage can be generated:
+
+#### Text coverage report (depends: gcovr)
+
+    $ ninja -C build coverage-text
+
+#### XML coverage report (depends: lcov)
+
+    $ ninja -C build coverage-xml
+
+#### HTML coverage report (depends: lcov)
+
+    $ ninja -C build coverage-html
