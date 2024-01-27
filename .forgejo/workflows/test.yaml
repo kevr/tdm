@@ -1,0 +1,31 @@
+on: [push]
+jobs:
+  test:
+    runs-on: docker
+    container:
+      image: archlinux:latest
+    env:
+      DEBIAN_FRONTEND: noninteractive
+      CXX: clang++
+    steps:
+      - run: pacman -Sy --noconfirm nodejs
+      - name: Cache Packages
+        id: pkgcache
+        uses: actions/cache@v3
+        with:
+          path: ~/packages
+          key: ${{ runner.os }}-archlinux-packages
+      - name: Install dependencies
+        env:
+          CACHE_HIT: ${{ steps.pkgcache.outputs.cache-hit }}
+        run: |
+          if [[ "$CACHE_HIT" == 'true' ]]; then
+            cp -vrf ~/packages/* /var/cache/pacman/pkg/
+          fi
+          pacman -Syu --noconfirm git meson clang ncurses gcovr lcov
+          mkdir -p ~/packages
+          cp -vrf /var/cache/pacman/pkg/* ~/packages/
+      - uses: actions/checkout@v3
+      - run: meson setup -Db_coverage=true build
+      - run: ninja -C build
+      - run: ninja -C build test
