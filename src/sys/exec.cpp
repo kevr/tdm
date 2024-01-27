@@ -1,5 +1,11 @@
 #include "exec.h"
 #include "../util/termio.h"
+#include <algorithm>
+#include <errno.h>
+#include <fcntl.h>
+#include <sys/select.h>
+#include <unistd.h>
+#include <utility>
 
 namespace tdm {
 
@@ -36,7 +42,7 @@ int Exec::operator()(const char *args)
         return set_error(errno);
     }
 
-    std::string cmd = std::format("{} {} 2>&{}", m_exec, args, pfd[1]);
+    std::string cmd = fmt::format("{} {} 2>&{}", m_exec, args, pfd[1]);
     if (!(m_stdout = sys->popen(cmd.c_str(), "r"))) {
         return set_error(errno);
     }

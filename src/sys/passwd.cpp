@@ -2,7 +2,7 @@
 #include "../lib/sys.h"
 #include "../util/str.h"
 #include <cstdint>
-#include <format>
+#include <fmt/format.h>
 #include <fstream>
 
 using namespace std::string_literals;
@@ -52,7 +52,7 @@ User &User::populate(void)
     auto *passwd = sys->getpwuid(uid());
     if (!passwd) {
         throw std::invalid_argument(
-            std::format("unable to lookup uid {}", uid()));
+            fmt::format("unable to lookup uid {}", uid()));
     }
 
     m_name = passwd->pw_name;

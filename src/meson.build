@@ -14,6 +14,9 @@ sources = [
 ]
 test_flags = ['-DTDM_TEST']
 
+fmt_proj = subproject('fmt')
+fmt = fmt_proj.get_variable('fmt_dep')
+
 gtest_proj = subproject('gtest')
 gtest = gtest_proj.get_variable('gtest_dep')
 gtest_main = gtest_proj.get_variable('gtest_main_dep')
@@ -23,15 +26,16 @@ gmock = gtest_proj.get_variable('gmock_dep')
 test_sources = [
   'lib/stubs/curses.cpp'
 ]
+test_lib_deps = [fmt, gtest, gmock]
 test_lib = static_library('test_lib',
   sources : sources + test_sources,
   cpp_args : test_flags,
-  dependencies : [gtest, gmock])
+  dependencies : test_lib_deps)
 test_dep = declare_dependency(
   link_with : [test_lib])
 
 # dependencies to include when compiling .test.cpp units
-test_deps = [test_dep, gtest, gmock, gtest_main]
+test_deps = test_lib_deps + [test_dep, gtest_main]
 
 # Recurse into util
 subdir('util')
@@ -49,11 +53,11 @@ test('main test', main_test)
 curses = dependency('curses')
 tdm_lib = static_library('tdm_lib',
   sources : sources,
-  dependencies : [curses])
+  dependencies : [curses, fmt])
 tdm_dep = declare_dependency(
   link_with : [tdm_lib])
 
 exe = executable('tdm',
   sources : ['main.cpp'],
-  dependencies : tdm_dep,
+  dependencies : [tdm_dep, fmt],
   install : true)

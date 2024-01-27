@@ -55,7 +55,7 @@ TEST(main, version)
     CaptureStdout();
     EXPECT_EQ(tdm_main(argc, argv), F_OK);
     auto output = GetCapturedStdout();
-    EXPECT_EQ(output, std::format("{}\n", PROJECT_VER));
+    EXPECT_EQ(output, fmt::format("{}\n", PROJECT_VER));
 }
 
 TEST(main, logs_to_logfile)

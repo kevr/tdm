@@ -1,5 +1,5 @@
 #include "env.h"
-#include <format>
+#include <fmt/format.h>
 #include <gtest/gtest.h>
 
 class EnvTest : public testing::Test
@@ -11,7 +11,7 @@ class EnvTest : public testing::Test
 TEST_F(EnvTest, xdg_data_home)
 {
     std::string home = getenv("HOME");
-    EXPECT_EQ(tdm::xdg_data_home(), std::format("{}/.local/share", home));
+    EXPECT_EQ(tdm::xdg_data_home(), fmt::format("{}/.local/share", home));
 }
 
 TEST_F(EnvTest, xdg_data_home_set)

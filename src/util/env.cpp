@@ -1,7 +1,7 @@
 #include "env.h"
 #include <algorithm>
 #include <filesystem>
-#include <format>
+#include <fmt/format.h>
 #include <unistd.h>
 
 namespace tdm {
@@ -13,6 +13,6 @@ std::string xdg_data_home(void)
     }
 
     const char *home = getenv("HOME");
-    return std::format("{}/.local/share", home);
+    return fmt::format("{}/.local/share", home);
 }
 } // namespace tdm

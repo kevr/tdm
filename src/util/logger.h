@@ -2,7 +2,7 @@
 #define UTIL_LOGGER_H
 
 #include <filesystem>
-#include <format>
+#include <fmt/format.h>
 #include <fstream>
 #include <iostream>
 #include <mutex>
@@ -28,7 +28,7 @@ class Logger
 
   public:
     template <typename... Args>
-    int info(std::format_string<Args...> fmt, Args &&...args)
+    int info(fmt::format_string<Args...> fmt, Args &&...args)
     {
         return write("INFO", std::move(fmt), std::forward<Args>(args)...);
     }
@@ -36,7 +36,7 @@ class Logger
     Logger &verbose(bool enabled);
 
     template <typename... Args>
-    int debug(std::format_string<Args...> fmt, Args &&...args)
+    int debug(fmt::format_string<Args...> fmt, Args &&...args)
     {
         return m_debug
                    ? write("DEBUG", std::move(fmt), std::forward<Args>(args)...)
@@ -44,14 +44,14 @@ class Logger
     }
 
     template <typename... Args>
-    int warning(std::format_string<Args...> fmt, Args &&...args)
+    int warning(fmt::format_string<Args...> fmt, Args &&...args)
     {
         write("WARNING", std::move(fmt), std::forward<Args>(args)...);
         return 1;
     }
 
     template <typename... Args>
-    int error(std::format_string<Args...> fmt, Args &&...args)
+    int error(fmt::format_string<Args...> fmt, Args &&...args)
     {
         write("ERROR", std::move(fmt), std::forward<Args>(args)...);
         return 1;
@@ -59,12 +59,12 @@ class Logger
 
   private:
     template <typename... Args>
-    int write(const std::string &label, std::format_string<Args...> fmt,
+    int write(const std::string &label, fmt::format_string<Args...> fmt,
               Args &&...args)
     {
         std::lock_guard<std::mutex> _(m_mutex);
-        *m_os << std::format("[{}:{}] {}\n", label, m_name,
-                             std::format(fmt, std::forward<Args>(args)...));
+        *m_os << fmt::format("[{}:{}] {}\n", label, m_name,
+                             fmt::format(fmt, std::forward<Args>(args)...));
         m_os->flush();
         return 0;
     }

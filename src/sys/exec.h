@@ -4,17 +4,8 @@
 #include "../lib/sys.h"
 #include "../util/logger.h"
 #include "../util/str.h"
-#include <algorithm>
-#include <cstdio>
-#include <cstring>
-#include <errno.h>
-#include <fcntl.h>
-#include <format>
 #include <functional>
 #include <string>
-#include <sys/select.h>
-#include <unistd.h>
-#include <utility>
 #include <vector>
 
 namespace tdm {

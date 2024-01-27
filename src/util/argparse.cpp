@@ -1,6 +1,7 @@
 #include "argparse.h"
 #include "termio.h"
 #include <algorithm>
+#include <fmt/format.h>
 #include <sstream>
 using namespace tdm;
 
@@ -76,13 +77,13 @@ bool Args::has(const std::string &opt) const
 
 Args &Args::describe(std::string option_name, std::string desc)
 {
-    return describe_formatted(std::format("--{}", option_name),
+    return describe_formatted(fmt::format("--{}", option_name),
                               std::move(desc));
 }
 
 Args &Args::describe(std::string option_name, char short_name, std::string desc)
 {
-    return describe_formatted(std::format("-{}, --{}", short_name, option_name),
+    return describe_formatted(fmt::format("-{}, --{}", short_name, option_name),
                               std::move(desc));
 }
 
@@ -90,7 +91,7 @@ Args &Args::describe(std::string option_name, char short_name, std::string arg,
                      std::string desc)
 {
     return describe_formatted(
-        std::format("-{}, --{} {}", short_name, option_name, arg),
+        fmt::format("-{}, --{} {}", short_name, option_name, arg),
         std::move(desc));
 }
 
