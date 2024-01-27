@@ -3,7 +3,7 @@
 
 #include "../singleton.h"
 
-#ifndef TEST
+#ifndef TDM_TEST
 #include <curses.h>
 #else
 #include "stubs/curses.h"

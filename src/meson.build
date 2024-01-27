@@ -11,6 +11,7 @@ sources = [
   'util/str.cpp',
   'util/termio.cpp',
 ]
+test_flags = ['-DTDM_TEST']
 
 gtest_proj = subproject('gtest')
 gtest = gtest_proj.get_variable('gtest_dep')
@@ -23,11 +24,13 @@ test_sources = [
 ]
 test_lib = static_library('test_lib',
   sources : sources + test_sources,
-  cpp_args : '-DTEST')
+  cpp_args : test_flags,
+  dependencies : [gtest, gmock])
 test_dep = declare_dependency(
   link_with : [test_lib])
-test_deps = [test_dep, gtest, gmock, gtest_main]
 
+# dependencies to include when compiling .test.cpp units
+test_deps = [test_dep, gtest, gmock, gtest_main]
 
 # Recurse into util
 subdir('util')
@@ -37,18 +40,19 @@ subdir('freedesktop')
 # tests
 main_test = executable('main_test',
   'main.test.cpp',
+  cpp_args : test_flags,
   dependencies : test_deps)
 test('main test', main_test)
 
 # tdm executable
 curses = dependency('curses')
-tdm_deps = [curses]
 tdm_lib = static_library('tdm_lib',
   sources : sources,
-  dependencies : tdm_deps)
-exe_sources = ['main.cpp']
+  dependencies : [curses])
+tdm_dep = declare_dependency(
+  link_with : [tdm_lib])
+
 exe = executable('tdm',
-  sources : exe_sources,
-  link_with : [tdm_lib],
-  dependencies : tdm_deps,
+  sources : ['main.cpp'],
+  dependencies : tdm_dep,
   install : true)
