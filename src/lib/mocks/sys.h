@@ -9,7 +9,11 @@ class MockSys : public Sys
 {
   public:
     MOCK_METHOD(struct passwd *, getpwuid, (uid_t), (const, override));
+    MOCK_METHOD(int, fcntl, (int, int, int), (const, override));
+    MOCK_METHOD(int, pipe, (int *), (const, override));
+    MOCK_METHOD(FILE *, fdopen, (int, const char *), (const, override));
+    MOCK_METHOD(FILE *, popen, (const char *, const char *), (const, override));
 };
-}; // namespace tdm
+} // namespace tdm
 
 #endif /* LIB_MOCKS_SYS_H */

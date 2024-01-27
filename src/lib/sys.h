@@ -18,6 +18,10 @@ class Sys
 
   public:
     virtual struct passwd *getpwuid(uid_t uid) const;
+    virtual int fcntl(int, int, int) const;
+    virtual int pipe(int fds[2]) const;
+    virtual FILE *fdopen(int, const char *) const;
+    virtual FILE *popen(const char *, const char *) const;
 };
 
 inline Singleton<Sys> sys;

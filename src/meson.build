@@ -3,6 +3,7 @@ sources = [
   'freedesktop/desktop.cpp',
   'lib/curses.cpp',
   'lib/sys.cpp',
+  'sys/exec.cpp',
   'sys/passwd.cpp',
   'util/argparse.cpp',
   'util/env.cpp',
