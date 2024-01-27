@@ -72,12 +72,12 @@ TEST(main, logs_to_logfile)
 TEST(main, unable_to_open_logfile)
 {
     int argc = 3;
-    const char *argv[] = {"tdm", "--log-to", "/dev/fake"};
+    const char *argv[] = {"tdm", "--log-to", "/sys/fake"};
 
     CaptureStderr();
     EXPECT_EQ(tdm_main(argc, argv), 1);
     auto output = GetCapturedStderr();
-    EXPECT_EQ(output, "error: unable to open '/dev/fake' for writing\n");
+    EXPECT_EQ(output, "error: unable to open '/sys/fake' for writing\n");
 }
 
 TEST(main, gracefully_fails)

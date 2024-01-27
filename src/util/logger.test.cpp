@@ -48,7 +48,7 @@ TEST_F(LoggerTest, error)
 
 TEST_F(LoggerTest, open_gracefully_fails)
 {
-    EXPECT_FALSE(logger.open("/dev/fake"));
+    EXPECT_FALSE(logger.open("/sys/fake"));
     GetCapturedStdout();
 }
 
