@@ -78,3 +78,5 @@ TEST(passwd, malformed_passwd_file)
     ss << "abc:def\n";
     EXPECT_THROW(tdm::get_users(ss), std::out_of_range);
 }
+
+TEST(passwd, root_user) { EXPECT_NE(sys->getpwuid(0), nullptr); }
