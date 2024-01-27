@@ -3,29 +3,32 @@ jobs:
   test:
     runs-on: docker
     container:
-      image: archlinux:latest
-    env:
-      DEBIAN_FRONTEND: noninteractive
-      CXX: clang++
+      image: kevr2d2/ubuntu-node:jammy
     steps:
-      - run: pacman -Sy --noconfirm nodejs
-      - name: Cache Packages
+      - name: Package cache
         id: pkgcache
         uses: actions/cache@v3
         with:
           path: ~/packages
-          key: ${{ runner.os }}-archlinux-packages
+          key: ${{ runner.os }}-ubuntu-22.04-packages-v2
+
+      - name: Restore cache
+        if: steps.pkgcache.outputs.cache-hit == 'true'
+        run: cp -vrf ~/packages/* /var/cache/apt/archives/
+
       - name: Install dependencies
-        env:
-          CACHE_HIT: ${{ steps.pkgcache.outputs.cache-hit }}
         run: |
-          if [[ "$CACHE_HIT" == 'true' ]]; then
-            cp -vrf ~/packages/* /var/cache/pacman/pkg/
-          fi
-          pacman -Syu --noconfirm git meson clang ncurses gcovr lcov
+          apt-get -y update
+          apt-get -y install git meson libncurses-dev gcovr lcov
+
+      - name: Save cache
+        run: |
           mkdir -p ~/packages
-          cp -vrf /var/cache/pacman/pkg/* ~/packages/
-      - uses: actions/checkout@v3
+          cp -vrf /var/cache/apt/archives/*.deb ~/packages/
+
+      - name: Checkout commit
+        uses: actions/checkout@v3
+
       - run: meson setup -Db_coverage=true build
       - run: ninja -C build
       - run: ninja -C build test
