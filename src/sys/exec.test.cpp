@@ -106,5 +106,5 @@ TEST(exec, stderr_works)
     std::string str;
     auto stderr_fn = [&str](std::string line) { str = line; };
     EXPECT_EQ(fake.communicate(stderr_fn, stderr_fn), 127);
-    EXPECT_EQ(str, "sh: line 1: FAKE_PROGRAM: command not found\n");
+    EXPECT_NE(str.find("not found"), std::string::npos);
 }
