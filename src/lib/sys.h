@@ -22,6 +22,7 @@ class Sys
     virtual int pipe(int fds[2]) const;
     virtual FILE *fdopen(int, const char *) const;
     virtual FILE *popen(const char *, const char *) const;
+    virtual int read(int fd, void *buf, size_t len) const;
 };
 
 inline Singleton<Sys> sys;

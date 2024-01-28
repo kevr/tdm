@@ -19,4 +19,9 @@ FILE *Sys::popen(const char *cmd, const char *modes) const
     return ::popen(cmd, modes);
 }
 
+int Sys::read(int fd, void *buf, size_t nbytes) const
+{
+    return ::read(fd, buf, nbytes);
+}
+
 }; // namespace tdm

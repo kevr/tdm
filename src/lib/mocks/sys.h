@@ -13,6 +13,7 @@ class MockSys : public Sys
     MOCK_METHOD(int, pipe, (int *), (const, override));
     MOCK_METHOD(FILE *, fdopen, (int, const char *), (const, override));
     MOCK_METHOD(FILE *, popen, (const char *, const char *), (const, override));
+    MOCK_METHOD(int, read, (int, void *, size_t), (const, override));
 };
 } // namespace tdm
 

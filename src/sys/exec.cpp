@@ -9,23 +9,6 @@
 
 namespace tdm {
 
-ssize_t getline(FILE *fd, std::string &line)
-{
-    if (fd == nullptr)
-        return -1;
-
-    char *c_line = NULL;
-    size_t len = 0;
-    ssize_t bytes;
-    if ((bytes = ::getline(&c_line, &len, fd)); bytes > 0) {
-        line.resize(bytes);
-        memcpy(line.data(), c_line, bytes);
-    }
-    free(c_line);
-
-    return bytes;
-}
-
 Exec::Exec(std::string exec) : m_exec(std::move(exec)) {}
 Exec::~Exec(void) { close(); }
 
@@ -34,25 +17,30 @@ const std::string &Exec::error(void) const { return m_error; }
 
 int Exec::operator()(const char *args)
 {
-    if (int rc = sys->pipe(pfd); rc < 0) {
+    if (int rc = sys->pipe(m_pfd); rc < 0) {
         return set_error(errno);
     }
 
-    if (!(m_stderr = sys->fdopen(pfd[0], "r"))) {
+    if (!(m_stderr = sys->fdopen(m_pfd[0], "r"))) {
         return set_error(errno);
     }
 
-    std::string cmd = fmt::format("{} {} 2>&{}", m_exec, args, pfd[1]);
+    std::string cmd = fmt::format("{} {} 2>&{}", m_exec, args, m_pfd[1]);
     if (!(m_stdout = sys->popen(cmd.c_str(), "r"))) {
         return set_error(errno);
     }
-    ::close(pfd[1]);
+    ::close(m_pfd[1]);
 
-    int stdout_fd = set_nonblocking(fileno(m_stdout));
-    select_fds.emplace_back(stdout_fd);
-
-    int stderr_fd = set_nonblocking(fileno(m_stderr));
-    select_fds.emplace_back(stderr_fd);
+    int stdout_fd = fileno(m_stdout);
+    int stderr_fd = fileno(m_stderr);
+    std::vector<int> fds({stdout_fd, stderr_fd});
+    for (int fd : fds) {
+        if (set_nonblocking(fd) == -1) {
+            throw std::runtime_error("fcntl failed");
+        }
+        m_closures[fd] = [this] { close(); };
+        m_fds.emplace_back(fd);
+    }
 
     return 0;
 }
@@ -60,19 +48,89 @@ int Exec::operator()(const char *args)
 int Exec::communicate(std::function<void(std::string)> stdout_fn,
                       std::function<void(std::string)> stderr_fn)
 {
-    auto fn = [this](FILE *f, auto fn_) {
-        std::string line;
-        if (getline(f, line) > 0) {
-            fn_(std::move(line));
-        } else {
-            close();
+    // Select loop until the process is done
+    fd_set fds;
+    FD_ZERO(&fds);
+
+    for (int fd : m_fds) {
+        FD_SET(fd, &fds);
+    }
+
+    std::map<int, std::function<void(std::string)>> handlers;
+    handlers[fileno(m_stdout)] = stdout_fn;
+    handlers[fileno(m_stderr)] = stderr_fn;
+
+    struct timeval tv = {.tv_sec = 0, .tv_usec = 1000 * 100};
+    int maxfd = *std::max_element(m_fds.begin(), m_fds.end());
+    int result = select(maxfd + 1, &fds, nullptr, nullptr, &tv);
+    while (m_fds.size() && result != -1) {
+        // If we reached timeout
+        if (result > 0) {
+            for (int fd : m_fds) {
+                if (FD_ISSET(fd, &fds)) {
+                    read_some(fd, m_streams[fd], m_lines[fd]);
+
+                    std::string line;
+                    while (m_lines[fd]) {
+                        --m_lines[fd];
+                        std::getline(m_streams[fd], line);
+                        handlers.at(fd)(std::move(line));
+                    }
+                }
+            }
         }
-    };
-    auto stdout_fn_ = [fn, stdout_fn](FILE *f) { fn(f, stdout_fn); };
-    auto stderr_fn_ = [fn, stderr_fn](FILE *f) { fn(f, stderr_fn); };
-    while (select(stdout_fn_, stderr_fn_) != -1)
-        ;
+
+        tv = {.tv_sec = 0, .tv_usec = 1000 * 100};
+        maxfd = *std::max_element(m_fds.begin(), m_fds.end());
+        result = select(maxfd + 1, &fds, nullptr, nullptr, &tv);
+    }
+
     return return_code();
+}
+
+int Exec::set_nonblocking(int fd)
+{
+    int flags = sys->fcntl(fd, F_GETFL, 0);
+    return sys->fcntl(fd, F_SETFL, flags | O_NONBLOCK);
+}
+
+int Exec::read_some(int fd, std::stringstream &buffer, size_t &lines)
+{
+    char buf[127 + 1] = {0};
+
+    // Read until we don't encounter EAGAIN
+    int bytes = sys->read(fd, buf, 127);
+    while (bytes == -1 && errno == EAGAIN) {
+        bytes = sys->read(fd, buf, 127);
+    }
+
+    logger.debug("read bytes: {}", bytes);
+
+    // If we got a non-erroneous read
+    if (bytes > 0) {
+        // then null terminate the buffer
+        buf[bytes] = '\0';
+
+        // and append it to the stream
+        auto sv = buffer.view();
+        auto o = sv.size();
+        buffer << buf;
+        sv = buffer.view();
+
+        // Scan the newly added data for line endings
+        size_t pos = sv.find("\n", o);
+        while (pos != std::string::npos) {
+            lines++;
+            o = pos + 1;
+            pos = sv.find("\n", o);
+        }
+
+        logger.debug("added buffer to stream for fd {}, lines = {}", fd, lines);
+    } else {
+        m_closures.at(fd)();
+    }
+
+    return bytes;
 }
 
 int Exec::set_error(int error)
@@ -80,47 +138,6 @@ int Exec::set_error(int error)
     m_error = strerror(error);
     m_return_code = errno;
     return return_code();
-}
-
-int Exec::set_nonblocking(int fd)
-{
-    int flags = sys->fcntl(fd, F_GETFL, 0);
-    if (int rc = sys->fcntl(fd, F_SETFL, flags | O_NONBLOCK); rc == -1) {
-        m_error = strerror(errno);
-        throw std::runtime_error(m_error);
-    }
-    return fd;
-}
-
-int Exec::select(std::function<void(FILE *)> stdout_fn,
-                 std::function<void(FILE *)> stderr_fn)
-{
-    if (!m_stdout)
-        return -1;
-
-    int stdout_fd = fileno(m_stdout);
-    int stderr_fd = fileno(m_stderr);
-
-    fd_set read_fds;
-    FD_ZERO(&read_fds);
-    int max_fd = -1;
-    for (auto select_fd : select_fds) {
-        FD_SET(select_fd, &read_fds);
-        if (select_fd > max_fd)
-            max_fd = select_fd;
-    }
-
-    struct timeval tv = {.tv_sec = 0, .tv_usec = 1000 * 1000};
-    int result = ::select(max_fd + 1, &read_fds, nullptr, nullptr, &tv);
-    if (result > 0) {
-        if (FD_ISSET(stdout_fd, &read_fds)) {
-            stdout_fn(m_stdout);
-        } else if (FD_ISSET(stderr_fd, &read_fds)) {
-            stderr_fn(m_stderr);
-        }
-    }
-
-    return result;
 }
 
 int Exec::close(void)
@@ -135,7 +152,7 @@ int Exec::close(void)
         m_stdout = nullptr;
     }
 
-    ::close(pfd[1]), ::close(pfd[0]);
+    ::close(m_pfd[1]), ::close(m_pfd[0]);
     return return_code();
 }
 
