@@ -7,7 +7,7 @@
 #define PROJECT_NAME "tdm"
 #define PROJECT_VER "0.1"
 
-using tdm::logger;
+using namespace tdm;
 
 int main(int argc, const char *argv[])
 {
@@ -24,7 +24,7 @@ int main(int argc, const char *argv[])
         {nullptr, 0, nullptr, 0},
     };
 
-    auto args = tdm::Args(opts)
+    auto args = Args(opts)
                     .describe("version", "Print the program version")
                     .describe("help", 'h', "Print this help summary")
                     .describe("verbose", 'v', "Enable verbose logging")
@@ -53,5 +53,5 @@ int main(int argc, const char *argv[])
     logger.verbose(args.has("verbose"));
 
     auto app = App();
-    return app.run();
+    return app.run("/etc/passwd");
 }
