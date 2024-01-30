@@ -49,6 +49,12 @@ main_test = executable('main_test',
   dependencies : test_deps)
 test('main test', main_test)
 
+app_test = executable('app_test',
+  'app.test.cpp',
+  cpp_args : test_flags,
+  dependencies : test_deps)
+test('app test', app_test)
+
 # tdm executable
 curses = dependency('curses')
 tdm_lib = static_library('tdm_lib',
