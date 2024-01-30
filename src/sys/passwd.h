@@ -1,6 +1,7 @@
 #ifndef SYS_PASSWD_H
 #define SYS_PASSWD_H
 
+#include "../util/str.h"
 #include <pwd.h>
 #include <string>
 #include <unistd.h>
@@ -45,6 +46,19 @@ class User
 };
 
 std::vector<User> get_users(std::istream &passwd);
+
+template <>
+struct Join<User>
+{
+    static std::string call(const std::vector<User> &vec,
+                            const std::string &sep)
+    {
+        std::vector<std::string> usernames;
+        for (auto &u : vec)
+            usernames.emplace_back(u.name());
+        return Join<std::string>::call(usernames, sep);
+    }
+};
 };
 
 #endif /* SYS_PASSWD_H */
