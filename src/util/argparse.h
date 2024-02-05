@@ -1,6 +1,7 @@
 #ifndef UTIL_ARGPARSE_H
 #define UTIL_ARGPARSE_H
 
+#include "../config.h"
 #include "termio.h"
 #include <getopt.h>
 #include <map>
@@ -26,7 +27,7 @@ struct Convert<int>
 class Args
 {
   public:
-    static constexpr const char *usage = "usage: tdm [options]";
+    static constexpr const char *usage = "usage: " PROJECT_NAME " [options]";
 
   private:
     struct option *m_options;

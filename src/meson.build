@@ -1,3 +1,7 @@
+configure_file(input : 'config.h.in',
+               output : 'config.h',
+               configuration : conf_data)
+
 sources = [
   'app.cpp',
   'freedesktop/desktop.cpp',

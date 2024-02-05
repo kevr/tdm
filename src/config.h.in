@@ -1,0 +1,7 @@
+#ifndef CONFIG_H
+#define CONFIG_H
+
+#define PROJECT_NAME "tdm"
+#define PROJECT_VER "@version@"
+
+#endif /* CONFIG_H */
