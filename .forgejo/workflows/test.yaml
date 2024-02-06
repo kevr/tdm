@@ -5,6 +5,9 @@ jobs:
     container:
       image: kevr2d2/ubuntu-node:jammy
     steps:
+      - name: Create test user
+        run: useradd -m arch -s /bin/bash
+
       - name: Package cache
         id: pkgcache
         uses: actions/cache@v3
@@ -19,7 +22,7 @@ jobs:
       - name: Install dependencies
         run: |
           apt-get -y update
-          apt-get -y install git meson libncurses-dev gcovr lcov
+          apt-get -y install git meson libncurses-dev gcovr lcov sudo
 
       - name: Save cache
         run: |
@@ -29,19 +32,18 @@ jobs:
       - name: Checkout commit
         uses: actions/checkout@v3
 
-      - run: meson setup -Db_coverage=true build
-      - run: ninja -C build
-      - run: ninja -C build test
-      - run: ninja -C build coverage
+      - name: Take ownership as arch user
+        run: chown -R arch:arch .
+
+      - run: sudo -u arch meson setup -Db_coverage=true build
+      - run: sudo -u arch ninja -C build
+      - run: sudo -u arch ninja -C build test
+      - run: sudo -u arch ninja -C build coverage
 
       - uses: actions/upload-artifact@v3
         with:
           name: testlog.txt
           path: build/meson-logs/testlog.txt
-      - uses: actions/upload-artifact@v3
-        with:
-          name: meson-logs
-          path: build/meson-logs
 
       - name: Check coverage
         run: |
