@@ -7,11 +7,12 @@
 #include <vector>
 
 namespace tdm {
+
 class App
 {
   private:
     bool m_init = false;
-    std::vector<tdm::User> m_users;
+    std::vector<User> m_users;
 
   public:
     App(void);

@@ -1,11 +1,17 @@
 #include "passwd.h"
 #include "../lib/sys.h"
+#include "../util/container.h"
+#include "../util/filesystem.h"
+#include "../util/logger.h"
 #include "../util/str.h"
+#include <algorithm>
 #include <cstdint>
 #include <fmt/format.h>
 #include <fstream>
+#include <system_error>
 
 using namespace std::string_literals;
+using tdm::freedesktop::DesktopFile;
 
 namespace tdm {
 
@@ -46,6 +52,40 @@ uid_t User::uid(void) const { return m_uid; }
 gid_t User::gid(void) const { return m_gid; }
 const std::string &User::home(void) const { return m_home; }
 const std::string &User::shell(void) const { return m_shell; }
+
+std::vector<DesktopFile> User::desktop_files(void)
+{
+    auto collect = [](std::vector<std::filesystem::path> listing,
+                      std::map<std::string, DesktopFile> &results) {
+        for (auto &path : listing) {
+            try {
+                auto f = freedesktop::DesktopFile(path);
+                results[f.get("Name")] = f;
+            } catch (std::exception &exc) {
+                logger.debug("{}", exc.what());
+                continue;
+            }
+        }
+    };
+
+    std::map<std::string, DesktopFile> results;
+    try {
+
+        // First, try collecting system xsessions
+        collect(listdir("/usr/share/xsessions", ".desktop"), results);
+
+        // After, try collecting XDG_DATA_HOME xsessions, overriding
+        // system xsessions of the same name
+        auto user_xsessions =
+            std::filesystem::path(home()) / ".local" / "share" / "xsessions";
+        collect(listdir(user_xsessions, ".desktop"), results);
+
+    } catch (std::filesystem::filesystem_error &exc) {
+        logger.error("{}", exc.what());
+    }
+
+    return values(results);
+}
 
 User &User::populate(void)
 {

@@ -1,6 +1,7 @@
 #ifndef SYS_PASSWD_H
 #define SYS_PASSWD_H
 
+#include "../freedesktop/desktop.h"
 #include "../util/str.h"
 #include <pwd.h>
 #include <string>
@@ -33,6 +34,8 @@ class User
     gid_t gid(void) const;
     const std::string &home(void) const;
     const std::string &shell(void) const;
+
+    std::vector<freedesktop::DesktopFile> desktop_files(void);
 
   private:
     /**
