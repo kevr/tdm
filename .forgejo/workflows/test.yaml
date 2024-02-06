@@ -35,15 +35,29 @@ jobs:
       - name: Take ownership as arch user
         run: chown -R arch:arch .
 
-      - run: sudo -u arch meson setup -Db_coverage=true build
-      - run: sudo -u arch ninja -C build
-      - run: sudo -u arch ninja -C build test
-      - run: sudo -u arch ninja -C build coverage
+      - name: Setup meson build
+        run: sudo -u arch meson setup -Db_coverage=true build
 
-      - uses: actions/upload-artifact@v3
+      - name: Build tdm
+        run: sudo -u arch ninja -C build
+
+      - name: Run tests
+        run: sudo -u arch ninja -C build test
+
+      - name: Upload testlog.txt artifact
+        uses: actions/upload-artifact@v3
         with:
           name: testlog.txt
           path: build/meson-logs/testlog.txt
+
+      - name: Build coverage
+        run: sudo -u arch ninja -C build coverage
+
+      - name: Upload coverage.txt artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: coverage.txt
+          path: build/meson-logs/coverage.txt
 
       - name: Check coverage
         run: |
