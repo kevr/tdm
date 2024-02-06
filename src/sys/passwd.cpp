@@ -60,10 +60,11 @@ std::vector<DesktopFile> User::desktop_files(void)
                       std::map<std::string, DesktopFile> &results) {
         for (auto &path : listing) {
             try {
-                auto f = freedesktop::DesktopFile(path);
-                results[f.get("Name")] = f;
+                freedesktop::DesktopFile desktop(path);
+                const auto name = desktop.get("Name");
+                results[name] = std::move(desktop);
             } catch (std::exception &exc) {
-                logger.debug("{}", exc.what());
+                logger.error("{}", exc.what());
                 continue;
             }
         }

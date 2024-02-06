@@ -35,9 +35,6 @@ class User
     const std::string &home(void) const;
     const std::string &shell(void) const;
 
-    std::vector<freedesktop::DesktopFile> desktop_files(void);
-
-  private:
     /**
      * Populate instance with passwd information
      *
@@ -45,7 +42,7 @@ class User
      **/
     User &populate(void);
 
-    friend std::vector<User> get_users(std::istream &);
+    std::vector<freedesktop::DesktopFile> desktop_files(void);
 };
 
 std::vector<User> get_users(std::istream &passwd);
