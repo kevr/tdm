@@ -39,7 +39,7 @@ class DesktopFile
     std::size_t parse(const std::filesystem::path &path,
                       std::string_view content);
 
-    std::string get(const std::string &key) const;
+    const std::string &get(const std::string &key) const;
 };
 
 }; // namespace tdm::freedesktop

@@ -98,7 +98,7 @@ std::size_t DesktopFile::parse(const std::filesystem::path &path,
     return 0;
 }
 
-std::string DesktopFile::get(const std::string &key) const
+const std::string &DesktopFile::get(const std::string &key) const
 {
     return m_options.at(key);
 }
