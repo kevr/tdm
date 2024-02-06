@@ -1,4 +1,5 @@
 #include "filesystem.h"
+#include "logger.h"
 #include <algorithm>
 
 using std::filesystem::directory_iterator;
@@ -9,12 +10,16 @@ std::vector<std::filesystem::path> listdir(const std::string &dir,
 {
     std::vector<std::filesystem::path> files;
 
-    auto suffix_len = suffix.size();
-    for (const auto &entry : directory_iterator(dir)) {
-        auto path = entry.path().string();
-        if (path.rfind(suffix) == path.size() - suffix_len) {
-            files.emplace_back(std::move(path));
+    try {
+        auto suffix_len = suffix.size();
+        for (const auto &entry : directory_iterator(dir)) {
+            auto path = entry.path().string();
+            if (path.rfind(suffix) == path.size() - suffix_len) {
+                files.emplace_back(std::move(path));
+            }
         }
+    } catch (std::exception &exc) {
+        logger.error("{}", exc.what());
     }
 
     using value_type = decltype(files)::value_type;
