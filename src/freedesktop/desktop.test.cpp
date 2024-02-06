@@ -1,4 +1,7 @@
 #include "desktop.h"
+#include "../except.h"
+#include "../sys/exec.h"
+#include <fstream>
 #include <gtest/gtest.h>
 
 using tdm::freedesktop::DesktopFile;
@@ -6,20 +9,36 @@ using tdm::freedesktop::DesktopFile;
 class DesktopTest : public testing::Test
 {
   protected:
+    std::string tmpdir = "/tmp/tdm-XXXXXX";
     DesktopFile desktop;
+
+  public:
+    void SetUp(void) { mkdtemp(tmpdir.data()); }
+    void TearDown(void) { std::filesystem::remove_all(tmpdir); }
+
+    using Pair = std::pair<std::string, std::string>;
+    std::filesystem::path write_desktop_file(std::vector<Pair> map)
+    {
+        auto path = std::filesystem::path(tmpdir) / "test.desktop";
+        std::ofstream ofs(path.c_str(), std::ios::out);
+        ofs << "[Desktop entry]\n";
+        for (auto &kv : map) {
+            ofs << kv.first << " = " << kv.second << "\n";
+        }
+        return path;
+    }
 };
 
 TEST_F(DesktopTest, works)
 {
-    std::string content(R"(
-# A skipped comment
-[Desktop Entry]
-Name=test
-Exec=test
-)");
+    auto f = write_desktop_file(
+        {{"# A skipped comment", ""}, {"Name", "test"}, {"Exec", "test"}});
 
-    // .parse()
-    EXPECT_EQ(desktop.parse(content), 0);
+    // .parse() via path constructor
+    EXPECT_NO_THROW({ desktop = DesktopFile(f); });
+
+    // .path()
+    EXPECT_EQ(desktop.path(), f.string());
 
     // .get()
     EXPECT_EQ(desktop.get("Name"), "test");
@@ -57,5 +76,32 @@ TEST_F(DesktopTest, malformed_line)
 Name=test
 Exec
 )");
-    EXPECT_EQ(desktop.parse(content), 4);
+    EXPECT_EQ(desktop.parse("test.desktop", content), 4);
+}
+
+TEST_F(DesktopTest, path_constructor_nofile_throws)
+{
+    EXPECT_THROW(DesktopFile("/path/to/nowhere"), std::invalid_argument);
+}
+
+TEST_F(DesktopTest, path_constructor_malformed_throws)
+{
+    auto f = write_desktop_file({{"Name", "test"}, {"Exec", "test"}});
+    std::ofstream ofs(f, std::ios::out);
+    ofs << "[Desktop entry]\n"
+        << "Blah\n";
+    ofs.close();
+    EXPECT_THROW(DesktopFile d(f), tdm::parse_error);
+}
+
+TEST_F(DesktopTest, path_constructor_permission_denied_throws)
+{
+    auto f = write_desktop_file({{"Name", "test"}, {"Exec", "test"}});
+
+    tdm::Exec chmod("chmod");
+    auto args = fmt::format("ug-r {}", f.c_str());
+    chmod(args.c_str());
+    EXPECT_EQ(chmod.communicate([](auto) {}, [](auto) {}), 0);
+
+    EXPECT_THROW(DesktopFile d(f), std::runtime_error);
 }

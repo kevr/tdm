@@ -1,6 +1,10 @@
 #include "desktop.h"
+#include "../except.h"
 #include "../util/str.h"
 #include "../util/termio.h"
+#include <filesystem>
+#include <fmt/format.h>
+#include <fstream>
 #include <set>
 #include <sstream>
 
@@ -11,28 +15,65 @@ static std::set<char> skip_chars{
 
 namespace tdm::freedesktop {
 
-DesktopFile::DesktopFile(const DesktopFile &o) : m_options(o.m_options) {}
-DesktopFile::DesktopFile(DesktopFile &&o) : m_options(std::move(o.m_options)) {}
+DesktopFile::DesktopFile(const std::filesystem::path &path)
+{
+    if (!std::filesystem::exists(path)) {
+        auto str =
+            fmt::format("unable to find {}, does it exist?", path.c_str());
+        throw std::invalid_argument(str);
+    }
+
+    std::ifstream ifs(path.c_str());
+    if (!ifs.is_open()) {
+        auto str = fmt::format("unable to open {} for reading", path.c_str());
+        throw std::runtime_error(str);
+    }
+
+    std::string buffer(std::istreambuf_iterator<char>(ifs), {});
+
+    if (std::size_t n = parse(path, buffer); n != 0) {
+        auto str =
+            fmt::format("malformed line {} found in {}", n, path.c_str());
+        throw tdm::parse_error(str);
+    }
+}
+
+DesktopFile::DesktopFile(const DesktopFile &o)
+    : m_path(o.m_path), m_options(o.m_options)
+{
+}
+
+DesktopFile::DesktopFile(DesktopFile &&o)
+    : m_path(std::move(o.m_path)), m_options(std::move(o.m_options))
+{
+}
 
 DesktopFile &DesktopFile::operator=(const DesktopFile &o)
 {
+    m_path = o.m_path;
     m_options = o.m_options;
     return *this;
 }
 
 DesktopFile &DesktopFile::operator=(DesktopFile &&o)
 {
+    m_path = std::move(o.m_path);
     m_options = std::move(o.m_options);
     return *this;
 }
 
-std::size_t DesktopFile::parse(std::string_view sv)
+const std::filesystem::path &DesktopFile::path(void) const { return m_path; }
+
+std::size_t DesktopFile::parse(const std::filesystem::path &path,
+                               std::string_view content)
 {
+    m_path = path;
+
     // Clear options if parse was previously run
     m_options.clear();
 
     // Parse a .desktop file
-    std::istringstream ss(sv.data());
+    std::istringstream ss(content.data());
     std::string line;
     for (std::size_t i = 1; std::getline(ss, line); ++i) {
         bool skip = strip(line).size() == 0 ||
