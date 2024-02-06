@@ -1,6 +1,7 @@
 #include "passwd.h"
 #include "../lib/sys.h"
 #include "../util/container.h"
+#include "../util/env.h"
 #include "../util/filesystem.h"
 #include "../util/logger.h"
 #include "../util/str.h"
@@ -77,7 +78,7 @@ std::vector<DesktopFile> User::desktop_files(void)
         // After, try collecting XDG_DATA_HOME xsessions, overriding
         // system xsessions of the same name
         auto user_xsessions =
-            std::filesystem::path(home()) / ".local" / "share" / "xsessions";
+            std::filesystem::path(xdg_data_home(*this)) / "xsessions";
         collect(listdir(user_xsessions, ".desktop"), results);
 
     } catch (std::filesystem::filesystem_error &exc) {

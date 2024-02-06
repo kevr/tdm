@@ -5,14 +5,13 @@
 #include <unistd.h>
 
 namespace tdm {
-std::string xdg_data_home(void)
+std::string xdg_data_home(const User &user)
 {
     const char *path = getenv("XDG_DATA_HOME");
     if (path) {
         return path;
     }
 
-    const char *home = getenv("HOME");
-    return fmt::format("{}/.local/share", home);
+    return fmt::format("{}/.local/share", user.home());
 }
 } // namespace tdm
