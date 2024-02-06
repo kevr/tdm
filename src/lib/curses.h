@@ -19,6 +19,7 @@ class Curses
   public:
     WINDOW *initscr(void) const;
     int refresh(void) const;
+    int clear(void) const;
     int endwin(void) const;
 };
 

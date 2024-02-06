@@ -8,6 +8,7 @@ struct WINDOW
 
 WINDOW *initscr(void);
 int refresh(void);
+int clear(void);
 int endwin(void);
 
 #endif /* STUBS_CURSES_H */
