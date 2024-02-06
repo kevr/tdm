@@ -1,24 +1,36 @@
 #include "passwd.h"
 #include "../lib/mocks/sys.h"
+#include "gtest/gtest.h"
+#include <fstream>
 #include <gtest/gtest.h>
 
 using tdm::sys;
+using tdm::User;
 using testing::_;
 using testing::Return;
+using testing::internal::CaptureStdout;
+using testing::internal::GetCapturedStdout;
 
 class PasswdTest : public testing::Test
 {
   protected:
     std::shared_ptr<tdm::MockSys> m_sys;
+    std::string tmpdir = "/tmp/tdm-XXXXXX";
 
   public:
     void SetUp(void)
     {
         m_sys = std::make_shared<tdm::MockSys>();
         sys.set(m_sys);
+
+        mkdtemp(tmpdir.data());
     }
 
-    void TearDown(void) { sys.reset(); }
+    void TearDown(void)
+    {
+        std::filesystem::remove_all(tmpdir);
+        sys.reset();
+    }
 };
 
 TEST_F(PasswdTest, unknown_user)
@@ -70,6 +82,32 @@ test3:x:1002:...
     EXPECT_EQ(test.gid(), 1000);
     EXPECT_EQ(test.home(), "/home/test");
     EXPECT_EQ(test.shell(), "/usr/bin/bash");
+}
+
+TEST_F(PasswdTest, skips_invalid_desktop_file)
+{
+    m_sys.reset();
+
+    auto user = User(getuid()).populate();
+    size_t num_desktops = user.desktop_files().size();
+
+    setenv("XDG_DATA_HOME", tmpdir.c_str(), 1);
+    auto xsessions = tmpdir + "/xsessions";
+    mkdir(xsessions.c_str(), 0755);
+
+    auto desktop = xsessions + "/test.desktop";
+    std::ofstream ofs(desktop, std::ios::out);
+    ofs << "[Desktop entry]\n"
+        << "Name = test\n"
+        << "Exec\n";
+    ofs.close();
+
+    CaptureStdout();
+    EXPECT_EQ(user.desktop_files().size(), num_desktops);
+    auto output = GetCapturedStdout();
+    EXPECT_NE(output.find("malformed line"), std::string::npos);
+
+    unsetenv("XDG_DATA_HOME");
 }
 
 TEST(passwd, malformed_passwd_file)
