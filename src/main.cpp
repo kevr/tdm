@@ -1,11 +1,9 @@
 #include "app.h"
+#include "config.h"
 #include "lib/curses.h"
 #include "util/argparse.h"
 #include "util/logger.h"
 #include "util/termio.h"
-
-#define PROJECT_NAME "tdm"
-#define PROJECT_VER "0.1"
 
 using namespace tdm;
 
