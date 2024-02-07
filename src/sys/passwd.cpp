@@ -71,20 +71,15 @@ std::vector<DesktopFile> User::desktop_files(void)
     };
 
     std::map<std::string, DesktopFile> results;
-    try {
 
-        // First, try collecting system xsessions
-        collect(listdir("/usr/share/xsessions", ".desktop"), results);
+    // First, try collecting system xsessions
+    collect(listdir("/usr/share/xsessions", ".desktop"), results);
 
-        // After, try collecting XDG_DATA_HOME xsessions, overriding
-        // system xsessions of the same name
-        auto user_xsessions =
-            std::filesystem::path(xdg_data_home(*this)) / "xsessions";
-        collect(listdir(user_xsessions, ".desktop"), results);
-
-    } catch (std::filesystem::filesystem_error &exc) {
-        logger.error("{}", exc.what());
-    }
+    // After, try collecting XDG_DATA_HOME xsessions, overriding
+    // system xsessions of the same name
+    auto user_xsessions =
+        std::filesystem::path(xdg_data_home(*this)) / "xsessions";
+    collect(listdir(user_xsessions, ".desktop"), results);
 
     return values(results);
 }
