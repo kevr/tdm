@@ -1,0 +1,24 @@
+image: ubuntu/jammy
+packages:
+  - git
+  - meson
+  - libncurses-dev
+  - gcovr
+  - lcov
+sources:
+  - https://git.sr.ht/~kevr/tdm
+tasks:
+  - setup: |
+      cd tdm
+      meson setup -Db_coverage=true build
+  - build: |
+      cd tdm
+      ninja -C build
+  - test: |
+      cd tdm
+      ninja -C build test
+  - coverage: |
+      cd tdm
+      ninja -C build coverage-text
+      cat build/meson-logs/coverage.txt
+      grep -Eq '^TOTAL.*(100)%$' build/meson-logs/coverage.txt
