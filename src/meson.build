@@ -18,7 +18,7 @@ sources = [
 ]
 test_flags = ['-DTDM_TEST']
 
-fmt_proj = subproject('fmt')
+fmt_proj = subproject('fmt', default_options : 'default_library=static')
 fmt = fmt_proj.get_variable('fmt_dep')
 
 gtest_proj = subproject('gtest')
