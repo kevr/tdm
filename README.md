@@ -44,3 +44,12 @@ After [running tests](#running-tests), coverage can be generated:
 #### HTML coverage report (depends: lcov)
 
     $ ninja -C build coverage-html
+
+## Upstreams
+
+All public upstreams' main branches are kept up to date when changes
+are merged in from others.
+
+- https://git.sr.ht/~kevr/tdm
+- https://codeberg.org/kevr/tdm
+- https://github.com/kevr/tdm
