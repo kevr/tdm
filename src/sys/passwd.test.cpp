@@ -1,5 +1,6 @@
 #include "passwd.h"
 #include "../lib/mocks/sys.h"
+#include "../util/termio.h"
 #include "gtest/gtest.h"
 #include <fstream>
 #include <gtest/gtest.h>
@@ -92,19 +93,35 @@ TEST_F(PasswdTest, skips_invalid_desktop_file)
     size_t num_desktops = user.desktop_files().size();
 
     setenv("XDG_DATA_HOME", tmpdir.c_str(), 1);
-    auto xsessions = tmpdir + "/xsessions";
+    auto xsessions = std::filesystem::path(tmpdir) / "xsessions";
     mkdir(xsessions.c_str(), 0755);
 
-    auto desktop = xsessions + "/test.desktop";
+    // Produce a valid .desktop file
+    auto desktop = xsessions / "test.desktop";
     std::ofstream ofs(desktop, std::ios::out);
+    ofs << "[Desktop entry]\n"
+        << "Name = test\n"
+        << "Exec = test\n";
+    ofs.close();
+
+    // Produce an invalid .desktop file
+    desktop = xsessions / "invalid.desktop";
+    ofs.open(desktop, std::ios::out);
     ofs << "[Desktop entry]\n"
         << "Name = test\n"
         << "Exec\n";
     ofs.close();
 
     CaptureStdout();
-    EXPECT_EQ(user.desktop_files().size(), num_desktops);
+    size_t new_size = user.desktop_files().size();
     auto output = GetCapturedStdout();
+    tdm::print("{}", output);
+
+    // Expect that test.desktop was parsed and added to results,
+    // but invalid.desktop was excluded
+    EXPECT_EQ(new_size, num_desktops + 1);
+
+    // Expect that we got a log error about a malformed line
     EXPECT_NE(output.find("malformed line"), std::string::npos);
 
     unsetenv("XDG_DATA_HOME");
