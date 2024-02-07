@@ -55,5 +55,19 @@ TEST_F(AppTest, with_users)
     EXPECT_CALL(*m_sys, getpwuid(_))
         .WillOnce(Return(&pwd1))
         .WillOnce(Return(&pwd2));
-    App().run(passwd);
+
+    setenv("XDG_DATA_HOME", tmpdir.c_str(), 1);
+    auto xsessions = std::filesystem::path(tmpdir) / "xsessions";
+    mkdir(xsessions.c_str(), 0755);
+
+    auto desktop = xsessions / "test.desktop";
+    std::ofstream ofs(desktop, std::ios::out);
+    ofs << "[Desktop entry]\n"
+        << "Name = test\n"
+        << "Exec = test\n";
+    ofs.close();
+
+    EXPECT_EQ(App().run(passwd), 0);
+
+    unsetenv("XDG_DATA_HOME");
 }
