@@ -33,7 +33,7 @@ test:
   coverage: '/^TOTAL.*([0-9]+)%$/'
   artifacts:
     reports:
-      junit: build/meson-logs/coverage.txt
+      junit: build/meson-logs/testlog.junit.xml
       coverage_report:
         coverage_format: cobertura
         path: build/meson-logs/coverage.xml
