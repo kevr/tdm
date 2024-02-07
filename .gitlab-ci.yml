@@ -1,0 +1,39 @@
+image: kevr2d2/ubuntu-node:jammy
+cache:
+  key: system-v1
+  paths:
+    - .apt-archives
+
+test:
+  stage: test
+  before_script:
+    # Add a user for unprivileged test purposes
+    - useradd -m test -s /bin/bash
+    - chown -R test:test .
+
+    # Obtain dependencies
+    - rm -f /etc/apt/apt.conf.d/docker-clean
+    - bash -c '[[ -d .apt-archives ]] && cp -r .apt-archives/*.deb /var/cache/apt/archives/ || /bin/true'
+    - mkdir -p .apt-archives
+    - apt-get -y update
+    - apt-get -y install sudo git meson libncurses-dev gcovr lcov
+    - cp -r /var/cache/apt/archives/*.deb .apt-archives/
+
+    # Build steps
+    - sudo -u test meson setup -Db_coverage=true build
+    - sudo -u test ninja -C build
+
+  script:
+    - sudo -u test ninja -C build test
+    - sudo -u test ninja -C build coverage-text
+    - sudo -u test ninja -C build coverage-xml
+    - cat build/meson-logs/coverage.txt
+    - grep '^TOTAL' build/meson-logs/coverage.txt
+
+  coverage: '/^TOTAL.*([0-9]+)%$/'
+  artifacts:
+    reports:
+      junit: build/meson-logs/coverage.txt
+      coverage_report:
+        coverage_format: cobertura
+        path: build/meson-logs/coverage.xml
