@@ -5,9 +5,6 @@ jobs:
     container:
       image: kevr2d2/ubuntu-node:jammy
     steps:
-      - name: Create test user
-        run: useradd -m test -s /bin/bash
-
       - name: Package cache
         id: pkgcache
         uses: actions/cache@v3
@@ -51,7 +48,7 @@ jobs:
           path: build/meson-logs/testlog.txt
 
       - name: Build coverage
-        run: ninja -C build coverage
+        run: sudo -u test ninja -C build coverage
 
       - name: Upload coverage.txt artifact
         uses: actions/upload-artifact@v3
