@@ -7,10 +7,6 @@ cache:
 test:
   stage: test
   before_script:
-    # Add a user for unprivileged test purposes
-    - useradd -m test -s /bin/bash
-    - chown -R test:test .
-
     # Obtain dependencies
     - rm -f /etc/apt/apt.conf.d/docker-clean
     - bash -c '[[ -d .apt-archives ]] && cp -r .apt-archives/*.deb /var/cache/apt/archives/ || /bin/true'
@@ -18,6 +14,9 @@ test:
     - apt-get -y update
     - apt-get -y install sudo git meson libncurses-dev gcovr lcov
     - cp -r /var/cache/apt/archives/*.deb .apt-archives/
+
+    # Take ownership of the working directory
+    - chown -R test:test .
 
     # Build steps
     - sudo -u test meson setup -Db_coverage=true build
