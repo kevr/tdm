@@ -1,5 +1,7 @@
 # **t**extual **d**esktop **m**anager
 
+![tests](https://github.com/kevr/tdm/actions/workflows/test.yaml/badge.svg?branch=main)
+
 A simple desktop manager with a textual login dialog.
 
 ## Compilation
