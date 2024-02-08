@@ -1,5 +1,7 @@
-build
 compile_commands.json
 .cache
+
+.vim/
+build/
 subprojects/fmt-*
 subprojects/googletest-*
