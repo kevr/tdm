@@ -1,0 +1,65 @@
+on: [push]
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    container:
+      image: kevr2d2/ubuntu-node:jammy
+    steps:
+      - name: Create test user
+        run: useradd -m test -s /bin/bash
+
+      - name: Package cache
+        id: pkgcache
+        uses: actions/cache@v3
+        with:
+          path: ~/packages
+          key: ${{ runner.os }}-ubuntu-22.04-packages-v2
+
+      - name: Restore cache
+        if: steps.pkgcache.outputs.cache-hit == 'true'
+        run: cp -vrf ~/packages/* /var/cache/apt/archives/
+
+      - name: Install dependencies
+        run: |
+          apt-get -y update
+          apt-get -y install git meson libncurses-dev gcovr lcov sudo
+
+      - name: Save cache
+        run: |
+          mkdir -p ~/packages
+          cp -vrf /var/cache/apt/archives/*.deb ~/packages/
+
+      - name: Checkout commit
+        uses: actions/checkout@v3
+
+      - name: Take ownership
+        run: chown -R test:test .
+
+      - name: Setup meson build
+        run: sudo -u test meson setup -Db_coverage=true build
+
+      - name: Build tdm
+        run: sudo -u test ninja -C build
+
+      - name: Run tests
+        run: sudo -u test ninja -C build test
+
+      - name: Upload testlog.txt artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: testlog.txt
+          path: build/meson-logs/testlog.txt
+
+      - name: Build coverage
+        run: ninja -C build coverage
+
+      - name: Upload coverage.txt artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: coverage.txt
+          path: build/meson-logs/coverage.txt
+
+      - name: Check coverage
+        run: |
+          cat build/meson-logs/coverage.txt
+          cat build/meson-logs/coverage.txt | grep -Eq '^TOTAL.*(100%)$'
