@@ -29,10 +29,11 @@ test:
     - cat build/meson-logs/coverage.txt
     - grep '^TOTAL' build/meson-logs/coverage.txt
 
-  coverage: '/^TOTAL.*([0-9]+)%$/'
+  coverage: '/^TOTAL.*\s+(\d+\%)$/'
   artifacts:
+    name: ${CI_JOB_NAME}-${CI_COMMIT_REF_NAME}-${CI_COMMIT_SHA}
+    expire_in: 2 days
     reports:
-      junit: build/meson-logs/testlog.junit.xml
       coverage_report:
         coverage_format: cobertura
         path: build/meson-logs/coverage.xml
