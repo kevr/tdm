@@ -38,7 +38,6 @@ int Exec::operator()(const char *args)
         if (set_nonblocking(fd) == -1) {
             throw std::runtime_error("fcntl failed");
         }
-        m_closures[fd] = [this] { close(); };
         m_fds.emplace_back(fd);
     }
 
@@ -101,6 +100,8 @@ int Exec::read_some(int fd, std::stringstream &buffer, size_t &lines)
     // Read until we don't encounter EAGAIN
     int bytes = sys->read(fd, buf, 127);
     while (bytes == -1 && errno == EAGAIN) {
+        // On bytes == -1 && errno == EAGAIN, keep reading until we get
+        // something else
         bytes = sys->read(fd, buf, 127);
     }
 
@@ -127,7 +128,9 @@ int Exec::read_some(int fd, std::stringstream &buffer, size_t &lines)
 
         logger.debug("added buffer to stream for fd {}, lines = {}", fd, lines);
     } else {
-        m_closures.at(fd)();
+        // In this case, bytes was <= 0 and errno != EAGAIN, in which case
+        // we close up the child process
+        close();
     }
 
     return bytes;
@@ -136,7 +139,7 @@ int Exec::read_some(int fd, std::stringstream &buffer, size_t &lines)
 int Exec::set_error(int error)
 {
     m_error = strerror(error);
-    m_return_code = errno;
+    m_return_code = error;
     return return_code();
 }
 

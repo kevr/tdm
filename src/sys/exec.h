@@ -26,10 +26,6 @@ class Exec
     std::map<int, std::stringstream> m_streams;
     std::map<int, size_t> m_lines;
 
-    std::map<int, std::function<void(void)>>
-        m_closures; // Mapping of fd -> FILE *
-    std::map<int, std::function<void(void)>> m_actions;
-
     int m_return_code = -1;
 
   public:
