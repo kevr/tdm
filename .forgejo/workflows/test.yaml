@@ -5,9 +5,6 @@ jobs:
     container:
       image: kevr2d2/ubuntu-node:jammy
     steps:
-      - name: Create test user
-        run: useradd -m arch -s /bin/bash
-
       - name: Package cache
         id: pkgcache
         uses: actions/cache@v3
@@ -32,17 +29,17 @@ jobs:
       - name: Checkout commit
         uses: actions/checkout@v3
 
-      - name: Take ownership as arch user
-        run: chown -R arch:arch .
+      - name: Take ownership as test user
+        run: chown -R test:test .
 
       - name: Setup meson build
-        run: sudo -u arch meson setup -Db_coverage=true build
+        run: sudo -u test meson setup -Db_coverage=true build
 
       - name: Build tdm
-        run: sudo -u arch ninja -C build
+        run: sudo -u test ninja -C build
 
       - name: Run tests
-        run: sudo -u arch ninja -C build test
+        run: sudo -u test ninja -C build test
 
       - name: Upload testlog.txt artifact
         uses: actions/upload-artifact@v3
@@ -51,7 +48,7 @@ jobs:
           path: build/meson-logs/testlog.txt
 
       - name: Build coverage
-        run: sudo -u arch ninja -C build coverage
+        run: sudo -u test ninja -C build coverage
 
       - name: Upload coverage.txt artifact
         uses: actions/upload-artifact@v3
