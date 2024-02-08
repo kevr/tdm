@@ -34,7 +34,7 @@ jobs:
         run: chown -R test:test .
 
       - name: Setup meson build
-        run: sudo -u test meson setup -Db_coverage=true build
+        run: sudo -u test meson setup -Ddisable_bin=true -Db_coverage=true build
 
       - name: Build tdm
         run: sudo -u test ninja -C build

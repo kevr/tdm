@@ -10,7 +10,7 @@ sources:
 tasks:
   - setup: |
       cd tdm
-      meson setup -Db_coverage=true build
+      meson setup -Ddisable_bin=true -Db_coverage=true build
   - build: |
       cd tdm
       ninja -C build

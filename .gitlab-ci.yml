@@ -19,7 +19,7 @@ test:
     - chown -R test:test .
 
     # Build steps
-    - sudo -u test meson setup -Db_coverage=true build
+    - sudo -u test meson setup -Ddisable_bin=true -Db_coverage=true build
     - sudo -u test ninja -C build
 
   script:
