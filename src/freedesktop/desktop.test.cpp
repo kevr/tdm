@@ -1,6 +1,6 @@
 #include "desktop.h"
 #include "../except.h"
-#include "../sys/exec.h"
+#include "../sys/process.h"
 #include <fstream>
 #include <gtest/gtest.h>
 
@@ -98,10 +98,9 @@ TEST_F(DesktopTest, path_constructor_permission_denied_throws)
 {
     auto f = write_desktop_file({{"Name", "test"}, {"Exec", "test"}});
 
-    tdm::Exec chmod("chmod");
-    auto args = fmt::format("ug-r {}", f.c_str());
-    chmod(args.c_str());
-    EXPECT_EQ(chmod.communicate([](auto) {}, [](auto) {}), 0);
+    tdm::Process chmod("chmod");
+    chmod.arg("ug-r", f).start();
+    EXPECT_EQ(chmod.wait().return_code(), 0);
 
     EXPECT_THROW(DesktopFile d(f), std::runtime_error);
 }

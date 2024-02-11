@@ -1,9 +1,9 @@
 if not get_option('disable_tests')
-  exec_test = executable('exec_test',
-    'exec.test.cpp',
+  process_test = executable('process_test',
+    'process.test.cpp',
     cpp_args : test_flags,
     dependencies : test_deps)
-  test('exec test', exec_test)
+  test('process test', process_test)
 
   passwd_test = executable('passwd_test',
     'passwd.test.cpp',

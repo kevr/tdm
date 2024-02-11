@@ -9,11 +9,12 @@ class MockSys : public Sys
 {
   public:
     MOCK_METHOD(struct passwd *, getpwuid, (uid_t), (const, override));
-    MOCK_METHOD(int, fcntl, (int, int, int), (const, override));
+    MOCK_METHOD(int, execve, (const char *, char *const *, char *const *),
+                (const, override));
+    MOCK_METHOD(int, dup2, (int, int), (const, override));
+    MOCK_METHOD(pid_t, fork, (), (const, override));
     MOCK_METHOD(int, pipe, (int *), (const, override));
-    MOCK_METHOD(FILE *, fdopen, (int, const char *), (const, override));
-    MOCK_METHOD(FILE *, popen, (const char *, const char *), (const, override));
-    MOCK_METHOD(int, read, (int, void *, size_t), (const, override));
+    MOCK_METHOD(int, waitpid, (pid_t, int *, int), (const, override));
 };
 } // namespace tdm
 
