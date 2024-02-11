@@ -126,6 +126,6 @@ class Process
     void create_pipe(int *fds);
 };
 // End of Process decls
-}
+} // namespace tdm
 
 #endif /* SYS_PROCESS_H */

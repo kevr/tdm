@@ -11,7 +11,10 @@ class EnvTest : public testing::Test
     User me = User(getuid()).populate();
 
   public:
-    void TearDown(void) { unsetenv("XDG_DATA_HOME"); }
+    void TearDown(void)
+    {
+        unsetenv("XDG_DATA_HOME");
+    }
 };
 
 TEST_F(EnvTest, xdg_data_home)

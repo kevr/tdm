@@ -8,8 +8,15 @@ class FilesystemTest : public testing::Test
     std::string tmpdir = "/tmp/tdm-XXXXXX";
 
   public:
-    void SetUp(void) { mkdtemp(tmpdir.data()); }
-    void TearDown(void) { std::filesystem::remove_all(tmpdir); }
+    void SetUp(void)
+    {
+        mkdtemp(tmpdir.data());
+    }
+
+    void TearDown(void)
+    {
+        std::filesystem::remove_all(tmpdir);
+    }
 };
 
 TEST_F(FilesystemTest, listdir)

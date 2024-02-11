@@ -59,6 +59,6 @@ struct Join<User>
         return Join<std::string>::call(usernames, sep);
     }
 };
-};
+} // namespace tdm
 
 #endif /* SYS_PASSWD_H */

@@ -15,7 +15,10 @@ class LoggerTest : public testing::Test
         CaptureStdout();
     }
 
-    void TearDown(void) { logger.verbose(false); }
+    void TearDown(void)
+    {
+        logger.verbose(false);
+    }
 };
 
 TEST_F(LoggerTest, info)
@@ -62,4 +65,7 @@ TEST(logger, debug_noop)
     EXPECT_EQ(output, "");
 }
 
-TEST(logger, open_resets) { EXPECT_TRUE(logger.open()); }
+TEST(logger, open_resets)
+{
+    EXPECT_TRUE(logger.open());
+}

@@ -13,8 +13,15 @@ class DesktopTest : public testing::Test
     DesktopFile desktop;
 
   public:
-    void SetUp(void) { mkdtemp(tmpdir.data()); }
-    void TearDown(void) { std::filesystem::remove_all(tmpdir); }
+    void SetUp(void)
+    {
+        mkdtemp(tmpdir.data());
+    }
+
+    void TearDown(void)
+    {
+        std::filesystem::remove_all(tmpdir);
+    }
 
     using Pair = std::pair<std::string, std::string>;
     std::filesystem::path write_desktop_file(std::vector<Pair> map)

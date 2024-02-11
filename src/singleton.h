@@ -13,7 +13,10 @@ class Singleton
     inline static T *m_ptr = &m_root;
 
   public:
-    T *ptr(void) { return m_ptr; }
+    T *ptr(void)
+    {
+        return m_ptr;
+    }
 
     Singleton &set(std::shared_ptr<T> other)
     {
@@ -27,7 +30,10 @@ class Singleton
         return *this;
     }
 
-    T *operator->(void) { return m_ptr; }
+    T *operator->(void)
+    {
+        return m_ptr;
+    }
 };
 
 }; // namespace tdm

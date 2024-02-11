@@ -24,6 +24,6 @@ class Curses
 };
 
 inline Singleton<Curses> curses;
-};
+} // namespace tdm
 
 #endif /* LIB_CURSES_H */

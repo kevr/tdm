@@ -5,7 +5,9 @@
 #include <sstream>
 using namespace tdm;
 
-Args::Args(struct option *options) : m_options(options) {}
+Args::Args(struct option *options) : m_options(options)
+{
+}
 
 int Args::parse(int argc, const char **argv)
 {
@@ -132,7 +134,10 @@ std::string Args::help(void) const
     return ss.str();
 }
 
-void Args::reset_getopt(void) { optind = 0; }
+void Args::reset_getopt(void)
+{
+    optind = 0;
+}
 
 Args &Args::describe_formatted(std::string option, std::string desc)
 {

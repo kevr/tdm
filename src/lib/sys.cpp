@@ -7,7 +7,10 @@
 
 namespace tdm {
 
-struct passwd *Sys::getpwuid(uid_t uid) const { return ::getpwuid(uid); }
+struct passwd *Sys::getpwuid(uid_t uid) const
+{
+    return ::getpwuid(uid);
+}
 
 // dup2/execve are never used in the main process, so coverage is excluded
 // LCOV_EXCL_START
@@ -32,7 +35,10 @@ int Sys::kill(pid_t pid, int sig) const
     return ::kill(pid, sig);
 }
 
-int Sys::pipe(int *pipedes) const { return ::pipe(pipedes); }
+int Sys::pipe(int *pipedes) const
+{
+    return ::pipe(pipedes);
+}
 
 FILE *Sys::fdopen(int fd, const char *modes) const
 {

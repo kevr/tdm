@@ -31,4 +31,6 @@ bool Logger::open(std::filesystem::path logfile)
     return true;
 }
 
-Logger::Logger(std::string name) : m_name(name) {}
+Logger::Logger(std::string name) : m_name(name)
+{
+}

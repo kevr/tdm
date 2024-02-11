@@ -62,7 +62,10 @@ DesktopFile &DesktopFile::operator=(DesktopFile &&o)
     return *this;
 }
 
-const std::filesystem::path &DesktopFile::path(void) const { return m_path; }
+const std::filesystem::path &DesktopFile::path(void) const
+{
+    return m_path;
+}
 
 std::size_t DesktopFile::parse(const std::filesystem::path &path,
                                std::string_view content)

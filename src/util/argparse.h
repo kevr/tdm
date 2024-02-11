@@ -15,13 +15,19 @@ namespace tdm {
 template <typename T = std::string>
 struct Convert
 {
-    static T cast(const std::string &str) { return str; }
+    static T cast(const std::string &str)
+    {
+        return str;
+    }
 };
 
 template <>
 struct Convert<int>
 {
-    static int cast(const std::string &str) { return std::stoi(str); }
+    static int cast(const std::string &str)
+    {
+        return std::stoi(str);
+    }
 };
 
 class Args

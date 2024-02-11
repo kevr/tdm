@@ -16,7 +16,9 @@ using tdm::freedesktop::DesktopFile;
 
 namespace tdm {
 
-User::User(uid_t uid) : m_uid(uid) {}
+User::User(uid_t uid) : m_uid(uid)
+{
+}
 
 User::User(const User &o)
 {
@@ -48,11 +50,30 @@ User &User::operator=(User &&o)
     return *this;
 }
 
-const std::string &User::name(void) const { return m_name; }
-uid_t User::uid(void) const { return m_uid; }
-gid_t User::gid(void) const { return m_gid; }
-const std::string &User::home(void) const { return m_home; }
-const std::string &User::shell(void) const { return m_shell; }
+const std::string &User::name(void) const
+{
+    return m_name;
+}
+
+uid_t User::uid(void) const
+{
+    return m_uid;
+}
+
+gid_t User::gid(void) const
+{
+    return m_gid;
+}
+
+const std::string &User::home(void) const
+{
+    return m_home;
+}
+
+const std::string &User::shell(void) const
+{
+    return m_shell;
+}
 
 std::vector<DesktopFile> User::desktop_files(void)
 {
@@ -132,4 +153,4 @@ std::vector<User> get_users(std::istream &passwd)
 
     return users;
 }
-};
+} // namespace tdm
