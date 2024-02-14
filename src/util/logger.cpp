@@ -34,3 +34,10 @@ bool Logger::open(std::filesystem::path logfile)
 Logger::Logger(std::string name) : m_name(name)
 {
 }
+
+std::string Logger::timestamp(void) const
+{
+    using namespace datetime;
+    auto now = system::now();
+    return system::strftime(now, "%Y-%m-%d %H:%M:%S %Z");
+}

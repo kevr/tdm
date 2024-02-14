@@ -1,6 +1,8 @@
 #ifndef UTIL_LOGGER_H
 #define UTIL_LOGGER_H
 
+#include "datetime.h"
+#include <chrono>
 #include <filesystem>
 #include <fmt/format.h>
 #include <fstream>
@@ -63,11 +65,13 @@ class Logger
               Args &&...args)
     {
         std::lock_guard<std::mutex> _(m_mutex);
-        *m_os << fmt::format("[{}:{}] {}\n", label, m_name,
+        *m_os << fmt::format("[{}] [{}:{}] {}\n", timestamp(), label, m_name,
                              fmt::format(fmt, std::forward<Args>(args)...));
         m_os->flush();
         return 0;
     }
+
+    std::string timestamp(void) const;
 };
 
 inline Logger logger("root");
