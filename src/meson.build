@@ -10,6 +10,7 @@ sources = [
   'sys/passwd.cpp',
   'sys/process.cpp',
   'util/argparse.cpp',
+  'util/datetime.cpp',
   'util/env.cpp',
   'util/filesystem.cpp',
   'util/logger.cpp',

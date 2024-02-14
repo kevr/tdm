@@ -5,6 +5,12 @@ if not get_option('disable_tests')
     dependencies : test_deps)
   test('argparse test', argparse_test)
 
+  datetime_test = executable('datetime_test',
+    'datetime.test.cpp',
+    cpp_args : test_flags,
+    dependencies : test_deps)
+  test('datetime test', datetime_test)
+
   env_test = executable('env_test',
     'env.test.cpp',
     cpp_args : test_flags,
