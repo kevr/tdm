@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 /**
  * A static handle to various libc and system calls we need to
  * mock for testing purposes.

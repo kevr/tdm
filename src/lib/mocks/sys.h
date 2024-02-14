@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 #ifndef LIB_MOCKS_SYS_H
 #define LIB_MOCKS_SYS_H
 

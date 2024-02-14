@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 #include "argparse.h"
 #include "termio.h"
 #include <algorithm>

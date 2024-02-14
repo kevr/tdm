@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 #ifndef UTIL_CONTAINER_H
 #define UTIL_CONTAINER_H
 

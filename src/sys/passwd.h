@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 #ifndef SYS_PASSWD_H
 #define SYS_PASSWD_H
 

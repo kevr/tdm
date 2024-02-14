@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 #include "app.h"
 #include "lib/curses.h"
 #include "util/logger.h"

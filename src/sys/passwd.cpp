@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 #include "passwd.h"
 #include "../lib/sys.h"
 #include "../util/container.h"

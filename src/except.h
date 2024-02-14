@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 #ifndef EXCEPT_H
 #define EXCEPT_H
 

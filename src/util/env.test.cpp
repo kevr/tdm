@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 #include "env.h"
 #include "../sys/passwd.h"
 #include <fmt/format.h>

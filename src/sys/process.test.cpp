@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 #include "process.h"
 #include "../lib/mocks/sys.h"
 #include "../util/str.h"

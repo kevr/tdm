@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 #ifndef SINGLETON_H
 #define SINGLETON_H
 

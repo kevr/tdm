@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 #ifndef UTIL_ARGPARSE_H
 #define UTIL_ARGPARSE_H
 

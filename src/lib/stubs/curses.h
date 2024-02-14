@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 #ifndef STUBS_CURSES_H
 #define STUBS_CURSES_H
 

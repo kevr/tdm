@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 #ifndef UTIL_ENV_H
 #define UTIL_ENV_H
 

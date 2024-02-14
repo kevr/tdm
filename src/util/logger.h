@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 #ifndef UTIL_LOGGER_H
 #define UTIL_LOGGER_H
 

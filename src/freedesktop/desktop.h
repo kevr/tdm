@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 #ifndef FREEDESKTOP_DESKTOP_H
 #define FREEDESKTOP_DESKTOP_H
 

@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 #ifndef SYS_PROCESS_H
 #define SYS_PROCESS_H
 

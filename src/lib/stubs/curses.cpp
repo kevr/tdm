@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 #include "curses.h"
 
 static WINDOW root;

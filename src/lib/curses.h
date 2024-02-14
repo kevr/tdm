@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 #ifndef LIB_CURSES_H
 #define LIB_CURSES_H
 

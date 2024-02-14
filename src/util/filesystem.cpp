@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 #include "filesystem.h"
 #include "logger.h"
 #include "str.h"

@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 #include "logger.h"
 using namespace tdm;
 

@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 #ifndef TERMIO_H
 #define TERMIO_H
 

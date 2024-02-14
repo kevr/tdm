@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 #include "app.h"
 #include "lib/mocks/sys.h"
 #include <filesystem>

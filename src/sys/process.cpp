@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 #include "process.h"
 #include "../lib/sys.h"
 #include "../util/filesystem.h"

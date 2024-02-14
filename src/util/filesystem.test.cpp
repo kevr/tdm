@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 #include "filesystem.h"
 #include <fstream>
 #include <gtest/gtest.h>

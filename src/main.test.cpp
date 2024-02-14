@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 #define main tdm_main
 #include "main.cpp"
 #undef main

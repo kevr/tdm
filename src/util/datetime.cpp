@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 #include "datetime.h"
 #include <iomanip>
 #include <sstream>

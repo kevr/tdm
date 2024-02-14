@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 #ifndef UTIL_STRING_H
 #define UTIL_STRING_H
 

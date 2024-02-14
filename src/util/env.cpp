@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 #include "env.h"
 #include <algorithm>
 #include <filesystem>

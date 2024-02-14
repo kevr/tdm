@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 #include "termio.h"
 #include <gtest/gtest.h>
 using testing::internal::CaptureStderr;
