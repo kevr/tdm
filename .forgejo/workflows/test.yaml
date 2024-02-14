@@ -19,7 +19,7 @@ jobs:
       - name: Install dependencies
         run: |
           apt-get -y update
-          apt-get -y install git meson libncurses-dev gcovr lcov sudo
+          apt-get -y install git meson libncurses-dev gcovr lcov sudo clang-format-16
 
       - name: Save cache
         run: |
@@ -32,14 +32,18 @@ jobs:
       - name: Take ownership as test user
         run: chown -R test:test .
 
-      - name: Setup meson build
-        run: sudo -u test meson setup -Ddisable_bin=true -Db_coverage=true build
+      - name: Lint sources
+        run: find src -type f -name '*.h' -o -name '*.cpp' | xargs clang-format-16 -Werror --dry-run
 
       - name: Build tdm
-        run: sudo -u test ninja -C build
+        run: |
+          sudo -u test meson setup -Ddisable_tests=true build_exe
+          sudo -u test ninja -j $(nproc) -C build_exe
 
       - name: Run tests
-        run: sudo -u test ninja -C build test
+        run: |
+          sudo -u test meson setup -Ddisable_bin=true -Db_coverage=true build
+          sudo -u test ninja -j $(nproc) -C build test
 
       - name: Upload testlog.txt artifact
         uses: actions/upload-artifact@v3

@@ -5,18 +5,27 @@ packages:
   - libncurses-dev
   - gcovr
   - lcov
+  - wget
+  - lsb-release
+  - software-properties-common
+  - gnupg
 sources:
   - https://git.sr.ht/~kevr/tdm
 tasks:
-  - setup: |
+  - lint: |
+      wget https://apt.llvm.org/llvm.sh
+      sudo bash llvm.sh 16
+      sudo apt-get -y install clang-format-16
       cd tdm
-      meson setup -Ddisable_bin=true -Db_coverage=true build
+      find src -type f -name '*.h' -o -name '*.cpp' | xargs clang-format-16 -Werror --dry-run
   - build: |
       cd tdm
-      ninja -C build
+      meson setup -Ddisable_tests=true build_exe
+      ninja -j $(nproc) -C build_exe
   - test: |
       cd tdm
-      ninja -C build test
+      meson setup -Ddisable_bin=true -Db_coverage=true build
+      ninja -j $(nproc) -C build test
   - coverage: |
       cd tdm
       ninja -C build coverage-text

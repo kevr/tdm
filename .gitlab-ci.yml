@@ -2,33 +2,48 @@ image: kevr2d2/ubuntu-node:jammy
 cache:
   key: system-v1
   paths:
-    - .apt-archives
+    - /var/cache/apt/archives
+
+stages:
+  - lint
+  - build
+  - test
+
+lint:
+  stage: lint
+  before_script:
+    - apt-get -y update
+    - apt-get -y install clang-format-16
+  script:
+    - find src -type f -name '*.h' -o -name '*.cpp' | xargs clang-format-16 -Werror --dry-run
+
+build:
+  stage: build
+  before_script:
+    - apt-get -y update
+    - apt-get -y install meson libncurses-dev
+    - chown -R test:test .
+  script:
+    - sudo -u test meson setup -Ddisable_tests=true build_exe
+    - sudo -u test ninja -j $(nproc) -C build_exe
 
 test:
   stage: test
   before_script:
-    # Obtain dependencies
-    - rm -f /etc/apt/apt.conf.d/docker-clean
-    - bash -c '[[ -d .apt-archives ]] && cp -r .apt-archives/*.deb /var/cache/apt/archives/ || /bin/true'
-    - mkdir -p .apt-archives
     - apt-get -y update
-    - apt-get -y install sudo git meson libncurses-dev gcovr lcov
-    - cp -r /var/cache/apt/archives/*.deb .apt-archives/
-
-    # Take ownership of the working directory
-    - chown -R test:test .
-
-    # Build steps
-    - sudo -u test meson setup -Ddisable_bin=true -Db_coverage=true build
-    - sudo -u test ninja -C build
-
+    - apt-get -y install meson gcovr
   script:
-    - sudo -u test ninja -C build test
-    - sudo -u test ninja -C build coverage-text
-    - sudo -u test ninja -C build coverage-xml
-    - cat build/meson-logs/coverage.txt
-    - grep '^TOTAL' build/meson-logs/coverage.txt
+    # Configure meson build for tests
+    - sudo -u test meson setup -Ddisable_bin=true -Db_coverage=true build
 
+    # Build and run tests
+    - sudo -u test ninja -j $(nproc) -C build
+    - sudo -u test ninja -C build test
+
+    # Collect test coverage
+    - sudo -u test ninja -C build coverage-xml
+    - sudo -u test ninja -C build coverage-text
+    - head -n -1 build/meson-logs/coverage.txt
   coverage: '/^TOTAL.*\s+(\d+\%)$/'
   artifacts:
     name: ${CI_JOB_NAME}-${CI_COMMIT_REF_NAME}-${CI_COMMIT_SHA}
