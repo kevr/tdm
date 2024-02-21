@@ -47,6 +47,9 @@ TEST_F(NonBlockingStreamTest, works)
     std::string line;
     stream.getline(line);
     EXPECT_EQ(line, "test");
+
+    close(fds[1]);
+    EXPECT_EQ(stream.getline(line), -1);
 }
 
 TEST_F(NonBlockingStreamTest, timeout)
