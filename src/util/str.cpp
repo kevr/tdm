@@ -58,17 +58,4 @@ std::vector<std::string> split(const std::string &str,
     return output;
 }
 
-std::tuple<int, std::string> getline(FILE *file)
-{
-    char *line = nullptr;
-    size_t buffer_size = 0;
-    int bytes = ::getline(&line, &buffer_size, file);
-    std::string line_;
-    if (bytes > 0) {
-        line_ = line;
-        free(line);
-    }
-    return std::make_tuple(bytes, rstrip(line_));
-}
-
-}; // namespace tdm
+} // namespace tdm

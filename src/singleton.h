@@ -31,6 +31,11 @@ class Singleton
         return *this;
     }
 
+    T &operator*(void)
+    {
+        return *m_ptr;
+    }
+
     T *operator->(void)
     {
         return m_ptr;

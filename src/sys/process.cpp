@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: MIT
 #include "process.h"
 #include "../lib/sys.h"
+#include "../util/container.h"
 #include "../util/filesystem.h"
 #include "../util/logger.h"
 #include "../util/str.h"
@@ -42,8 +43,7 @@ Process &Process::operator=(Process &&o)
     m_stdout_fd[1] = o.m_stdout_fd[1];
     o.m_stdout_fd[1] = -1;
 
-    m_stdout = o.m_stdout;
-    o.m_stdout = nullptr;
+    m_stdout_stream = std::move(o.m_stdout_stream);
 
     m_stderr_fd[0] = o.m_stderr_fd[0];
     o.m_stderr_fd[0] = -1;
@@ -51,8 +51,7 @@ Process &Process::operator=(Process &&o)
     m_stderr_fd[1] = o.m_stderr_fd[1];
     o.m_stderr_fd[1] = -1;
 
-    m_stderr = o.m_stderr;
-    o.m_stderr = nullptr;
+    m_stderr_stream = std::move(o.m_stderr_stream);
 
     m_return_code = o.m_return_code;
     return *this;
@@ -73,14 +72,14 @@ pid_t Process::pid(void) const
     return m_pid;
 }
 
-FILE *Process::stdout(void) const
+io::socket::Stream &Process::stdout(void)
 {
-    return m_stdout;
+    return *m_stdout_stream;
 }
 
-FILE *Process::stderr(void) const
+io::socket::Stream &Process::stderr(void)
 {
-    return m_stderr;
+    return *m_stderr_stream;
 }
 
 int Process::return_code(void) const
@@ -101,6 +100,12 @@ Process &Process::arg(std::string value)
     return *this;
 }
 
+Process &Process::env(std::string value)
+{
+    m_env.emplace_back(std::move(value));
+    return *this;
+}
+
 pid_t Process::start(void)
 {
     if (*this) {
@@ -116,9 +121,7 @@ pid_t Process::start(void)
 
     // Create child process stdout/stderr pipes
     create_pipe(m_stdout_fd);
-    m_stdout = sys->fdopen(m_stdout_fd[0], "r");
     create_pipe(m_stderr_fd);
-    m_stderr = sys->fdopen(m_stderr_fd[0], "r");
 
     m_pid = sys->fork();
     if (m_pid == -1) {
@@ -127,26 +130,31 @@ pid_t Process::start(void)
         return pid();
     } else if (m_pid > 0) {
         // In parent
+        // Close child write fds in the parent
+        ::close(m_stdout_fd[1]), ::close(m_stderr_fd[1]);
         m_started = true;
+        m_stdout_stream = std::make_unique<io::socket::Stream>(m_stdout_fd[0]);
+        m_stderr_stream = std::make_unique<io::socket::Stream>(m_stderr_fd[0]);
         return pid();
     }
 
-    // LCOV_EXCL_START
     // In child
+    // Close parent read fds in the child
+    ::close(m_stdout_fd[0]), ::close(m_stderr_fd[0]);
+
+    // Redirect std(out|err) to m_std(out|err)_fd[1]
     sys->dup2(m_stdout_fd[1], STDOUT_FILENO);
     sys->dup2(m_stderr_fd[1], STDERR_FILENO);
 
-    std::vector<char *> v;
-    v.emplace_back(m_binary.data());
-    for (auto &arg : m_args)
-        v.emplace_back(arg.data());
-    v.emplace_back(nullptr);
+    auto argv = to_argv(m_args);
+    argv.insert(argv.begin(), m_binary.data());
+    auto env = to_argv(m_env);
 
-    sys->execve(binary_path.c_str(), v.data(), nullptr);
-
-    logger.error("unable to execve {}, error = {}", m_binary, strerror(errno));
+    if (sys->execve(binary_path.c_str(), argv.data(), env.data()) == -1) {
+        logger.error("unable to execve {}, error = {}", m_binary,
+                     strerror(errno));
+    }
     return pid();
-    // LCOV_EXCL_STOP
 }
 
 bool Process::kill(int sig)
@@ -185,20 +193,10 @@ Process &Process::wait(void)
 void Process::close(void)
 {
     // Close child stderr pipe handle and fds
-    if (m_stderr) {
-        ::fclose(m_stderr);
-        m_stderr = nullptr;
-    }
-    ::close(m_stderr_fd[0]);
-    ::close(m_stderr_fd[1]);
+    ::close(m_stderr_fd[0]), ::close(m_stderr_fd[1]);
 
     // Close child stdout pipe handle and fds
-    if (m_stdout) {
-        ::fclose(m_stdout);
-        m_stdout = nullptr;
-    }
-    ::close(m_stdout_fd[0]);
-    ::close(m_stdout_fd[1]);
+    ::close(m_stdout_fd[0]), ::close(m_stdout_fd[1]);
 }
 
 void Process::create_pipe(int *fds)

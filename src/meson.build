@@ -5,6 +5,9 @@ configure_file(input : 'config.h.in',
 sources = [
   'app.cpp',
   'freedesktop/desktop.cpp',
+  'io/socket/basic_stream.cpp',
+  'io/socket/stream.cpp',
+  'io/socket/nonblocking_stream.cpp',
   'lib/curses.cpp',
   'lib/sys.cpp',
   'sys/passwd.cpp',
@@ -47,6 +50,7 @@ endif
 subdir('util')
 subdir('sys')
 subdir('freedesktop')
+subdir('io')
 
 # tests
 if not get_option('disable_tests')

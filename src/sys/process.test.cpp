@@ -1,18 +1,23 @@
 // SPDX-License-Identifier: MIT
 #include "process.h"
+#include "../io/io.h"
 #include "../lib/mocks/sys.h"
-#include "../util/str.h"
+#include "../util/container.h"
 #include "../util/termio.h"
 #include <gtest/gtest.h>
 
 using namespace tdm;
+using namespace std::placeholders;
 using testing::_;
 using testing::Invoke;
 using testing::Return;
+using testing::internal::CaptureStdout;
+using testing::internal::GetCapturedStdout;
 
 class ProcessTest : public testing::Test
 {
   protected:
+    Sys *m_real_sys;
     std::shared_ptr<MockSys> m_sys = std::make_shared<MockSys>();
     int m_pipefds[2];
     FILE *m_pipe;
@@ -20,6 +25,8 @@ class ProcessTest : public testing::Test
   public:
     void SetUp(void)
     {
+        logger.verbose(true);
+        m_real_sys = sys.ptr();
         sys.set(m_sys);
     }
 
@@ -45,9 +52,9 @@ class ProcessTest : public testing::Test
         EXPECT_CALL(*m_sys, dup2(_, _)).WillRepeatedly(Return(0));
     }
 
-    void mock_fork(void)
+    void mock_fork(pid_t pid)
     {
-        EXPECT_CALL(*m_sys, fork()).WillRepeatedly(Return(1));
+        EXPECT_CALL(*m_sys, fork()).WillRepeatedly(Return(pid));
     }
 
     /**
@@ -65,9 +72,9 @@ class ProcessTest : public testing::Test
                 }));
     }
 
-    void mock_execve(void)
+    void mock_execve(int rc)
     {
-        EXPECT_CALL(*m_sys, execve(_, _, _)).WillRepeatedly(Return(0));
+        EXPECT_CALL(*m_sys, execve(_, _, _)).WillRepeatedly(Return(rc));
     }
 };
 
@@ -91,14 +98,38 @@ TEST_F(ProcessTest, fork_fails)
 TEST_F(ProcessTest, waitpid_fails)
 {
     mock_pipe();
-    mock_fork();
-    mock_dup2();
-    mock_execve();
+    mock_fork(1);
     EXPECT_CALL(*m_sys, waitpid(_, _, _)).WillOnce(Return(-1));
 
     Process echo("echo");
     echo.arg("test").start();
     EXPECT_THROW(echo.wait(), std::runtime_error);
+}
+
+TEST_F(ProcessTest, fork_client)
+{
+    mock_pipe();
+    mock_fork(0);
+    mock_dup2();
+    mock_execve(0);
+
+    Process echo("echo");
+    EXPECT_EQ(echo.arg("test").start(), 0);
+}
+
+TEST_F(ProcessTest, execve_fails)
+{
+    mock_pipe();
+    mock_fork(0);
+    mock_dup2();
+    mock_execve(-1);
+
+    Process echo("echo");
+
+    CaptureStdout();
+    EXPECT_EQ(echo.arg("test").start(), 0);
+    auto output = GetCapturedStdout();
+    EXPECT_NE(output.find("unable to execve echo"), std::string::npos);
 }
 
 TEST(Process, default_constructs)
@@ -124,7 +155,8 @@ TEST(Process, echo)
 
     EXPECT_EQ(echo.wait().return_code(), 0);
 
-    auto [rc, line] = tdm::getline(echo.stdout());
+    std::string line;
+    echo.stdout().getline(line);
     EXPECT_EQ(line, "test");
 }
 
@@ -141,7 +173,8 @@ TEST(Process, cat_error)
     EXPECT_EQ(cat2.binary(), "cat");
     EXPECT_NE(cat2.wait().return_code(), 0);
 
-    auto [rc, line] = tdm::getline(cat2.stderr());
+    std::string line;
+    cat2.stderr().getline(line);
     EXPECT_NE(line.rfind("No such file or directory"), std::string::npos);
 }
 
@@ -157,4 +190,14 @@ TEST(Process, child_signal)
     sleep.arg("30s").start();
     sleep.kill(SIGTERM);
     EXPECT_EQ(sleep.wait().return_code(), SIGTERM);
+}
+
+TEST(Process, env)
+{
+    Process printenv("printenv");
+    printenv.env("TEST_VAR=1").start();
+    EXPECT_EQ(printenv.wait().return_code(), 0);
+
+    auto doc = printenv.stdout().soup();
+    EXPECT_NE(doc.find("TEST_VAR=1"), std::string::npos);
 }

@@ -2,6 +2,8 @@
 #ifndef SYS_PROCESS_H
 #define SYS_PROCESS_H
 
+#include "../io/io.h"
+#include <memory>
 #include <string>
 #include <unistd.h>
 #include <vector>
@@ -18,17 +20,18 @@ class Process
 
     //! Executable arguments
     std::vector<std::string> m_args;
+    std::vector<std::string> m_env;
 
     //! Child process PID
     pid_t m_pid = 0;
 
     //! Standard output descriptor
     int m_stdout_fd[2] = {-1};
-    FILE *m_stdout = nullptr;
+    std::unique_ptr<io::socket::Stream> m_stdout_stream;
 
     //! Standard error descriptor
     int m_stderr_fd[2] = {-1};
-    FILE *m_stderr = nullptr;
+    std::unique_ptr<io::socket::Stream> m_stderr_stream;
 
     //! Child process return code
     int m_return_code = -1;
@@ -69,10 +72,10 @@ class Process
     pid_t pid(void) const;
 
     //! Standard out descriptor of child process
-    FILE *stdout(void) const;
+    io::socket::Stream &stdout(void);
 
     //! Standard error descriptor of child process
-    FILE *stderr(void) const;
+    io::socket::Stream &stderr(void);
 
     //! Get process return code (post-wait)
     int return_code(void) const;
@@ -95,6 +98,7 @@ class Process
 
     //! Add an argument to executable args
     Process &arg(std::string value);
+    Process &env(std::string value);
 
     /**
      * Start the process
@@ -113,12 +117,12 @@ class Process
     //! Wait for the process to exit
     Process &wait(void);
 
-  private:
     /**
      * Close internal fds and FILE pointers
      **/
     void close(void);
 
+  private:
     /**
      * Create a pipe
      *

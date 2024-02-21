@@ -26,6 +26,11 @@ int Sys::execve(const char *path, char *const *argv, char *const *env) const
 }
 // LCOV_EXCL_STOP
 
+int Sys::fcntl(int fd, int cmd, int arg) const
+{
+    return ::fcntl(fd, cmd, arg);
+}
+
 pid_t Sys::fork(void) const
 {
     return ::fork();
@@ -41,9 +46,9 @@ int Sys::pipe(int *pipedes) const
     return ::pipe(pipedes);
 }
 
-FILE *Sys::fdopen(int fd, const char *modes) const
+int Sys::read(int fd, void *buf, size_t count) const
 {
-    return ::fdopen(fd, modes);
+    return ::read(fd, buf, count);
 }
 
 int Sys::waitpid(pid_t pid, int *status, int flags) const

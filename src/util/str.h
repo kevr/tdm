@@ -3,6 +3,8 @@
 #define UTIL_STRING_H
 
 #include <cstring>
+#include <memory>
+#include <sstream>
 #include <string>
 #include <tuple>
 #include <vector>
@@ -41,14 +43,6 @@ std::string join(const std::vector<T> &vec, const std::string &sep)
 {
     return Join<T>::call(vec, sep);
 }
-
-/**
- * Get a line from a FILE
- *
- * @param file Pointer to FILE
- * @returns (return_code, line_string) tuple
- **/
-std::tuple<int, std::string> getline(FILE *file);
 
 }; // namespace tdm
 
