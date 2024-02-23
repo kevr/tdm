@@ -21,7 +21,8 @@ build:
   stage: build
   before_script:
     - apt-get -y update
-    - apt-get -y install meson libncurses-dev
+    - apt-get -y install meson pkg-config libpam-dev libncurses-dev
+    - install -m666 pc/ubuntu-jammy.pam.pc /usr/lib/pkgconfig/pam.pc
     - chown -R test:test .
   script:
     - sudo -u test meson setup -Ddisable_tests=true build_exe
@@ -31,7 +32,8 @@ test:
   stage: test
   before_script:
     - apt-get -y update
-    - apt-get -y install meson gcovr
+    - apt-get -y install gcovr meson pkg-config libpam-dev
+    - install -m666 pc/ubuntu-jammy.pam.pc /usr/lib/pkgconfig/pam.pc
   script:
     # Configure meson build for tests
     - sudo -u test meson setup -Ddisable_bin=true -Db_coverage=true build
