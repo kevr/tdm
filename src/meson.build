@@ -20,8 +20,11 @@ sources = [
   'util/str.cpp',
   'util/termio.cpp',
 ]
+
 fmt_proj = subproject('fmt', default_options : 'default_library=static')
 fmt = fmt_proj.get_variable('fmt_dep')
+
+pam = dependency('pam')
 
 if not get_option('disable_tests')
   gtest_proj = subproject('gtest')
@@ -34,7 +37,7 @@ if not get_option('disable_tests')
     'lib/stubs/curses.cpp'
   ]
   test_flags = ['-DTDM_TEST']
-  test_lib_deps = [fmt, gtest, gmock]
+  test_lib_deps = [fmt, pam, gtest, gmock]
   test_lib = static_library('test_lib',
     sources : sources + test_sources,
     cpp_args : test_flags,
@@ -78,6 +81,6 @@ if not get_option('disable_bin')
 
   exe = executable('tdm',
     sources : ['main.cpp'],
-    dependencies : [tdm_dep, fmt],
+    dependencies : [tdm_dep, fmt, pam],
     install : true)
 endif
