@@ -20,7 +20,7 @@ jobs:
       - name: Install dependencies
         run: |
           apt-get -y update
-          apt-get -y install git meson libncurses-dev gcovr lcov sudo clang-format-16
+          apt-get -y install git meson libncurses-dev libpam-dev gcovr lcov sudo clang-format-16 pkg-config whois fakeroot-ng
 
       - name: Save cache
         run: |
@@ -33,6 +33,15 @@ jobs:
       - name: Take ownership
         run: chown -R test:test .
 
+      - name: Install pam.pc
+        run: install -m666 pc/ubuntu-jammy.pam.pc /usr/share/pkgconfig/pam.pc
+
+      - name: Create tdm_test user
+        run: bash ci/adduser.sh
+
+      - name: Add testing user to the shadow group
+        run: gpasswd -a test shadow
+
       - name: Lint sources
         run: find src -type f -name '*.h' -o -name '*.cpp' | xargs clang-format-16 -Werror --dry-run
 
@@ -44,7 +53,7 @@ jobs:
       - name: Run tests
         run: |
           sudo -u test meson setup -Ddisable_bin=true -Db_coverage=true build
-          sudo -u test ninja -j $(nproc) -C build test
+          sudo -u test fakeroot ninja -j $(nproc) -C build test
 
       - name: Upload testlog.txt artifact
         uses: actions/upload-artifact@v3

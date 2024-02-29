@@ -3,12 +3,16 @@ packages:
   - git
   - meson
   - libncurses-dev
+  - libpam-dev
   - gcovr
   - lcov
   - wget
   - lsb-release
   - software-properties-common
   - gnupg
+  - pkg-config
+  - whois
+  - fakeroot-ng
 sources:
   - https://git.sr.ht/~kevr/tdm
 tasks:
@@ -20,12 +24,16 @@ tasks:
       find src -type f -name '*.h' -o -name '*.cpp' | xargs clang-format-16 -Werror --dry-run
   - build: |
       cd tdm
+      sudo install -m666 pc/ubuntu-jammy.pam.pc /usr/share/pkgconfig/pam.pc
+      sudo bash ci/adduser.sh
+      sudo gpasswd -a $(whoami) shadow
       meson setup -Ddisable_tests=true build_exe
       ninja -j $(nproc) -C build_exe
   - test: |
       cd tdm
       meson setup -Ddisable_bin=true -Db_coverage=true build
-      ninja -j $(nproc) -C build test
+      ninja -j $(nproc) -C build
+      fakeroot ninja -C build test
   - coverage: |
       cd tdm
       ninja -C build coverage-text

@@ -32,20 +32,26 @@ test:
   stage: test
   before_script:
     - apt-get -y update
-    - apt-get -y install gcovr meson pkg-config libpam-dev
+    - apt-get -y install gcovr meson pkg-config libpam-dev whois fakeroot-ng
     - install -m666 pc/ubuntu-jammy.pam.pc /usr/lib/pkgconfig/pam.pc
+    # Add tdm_test user via ci script
+    - bash ci/adduser.sh
+    # Give the test user shadow access for pam authentication
+    - gpasswd -a test shadow
+
   script:
     # Configure meson build for tests
     - sudo -u test meson setup -Ddisable_bin=true -Db_coverage=true build
 
     # Build and run tests
     - sudo -u test ninja -j $(nproc) -C build
-    - sudo -u test ninja -C build test
+    - sudo -u test fakeroot ninja -C build test
 
     # Collect test coverage
     - sudo -u test ninja -C build coverage-xml
     - sudo -u test ninja -C build coverage-text
     - head -n -1 build/meson-logs/coverage.txt
+
   coverage: '/^TOTAL.*\s+(\d+\%)$/'
   artifacts:
     name: ${CI_JOB_NAME}-${CI_COMMIT_REF_NAME}-${CI_COMMIT_SHA}
