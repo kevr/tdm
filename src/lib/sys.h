@@ -19,6 +19,7 @@ class Sys
     virtual ~Sys(void) = default;
 
   public:
+    virtual struct passwd *getpwnam(const char *name) const;
     virtual struct passwd *getpwuid(uid_t uid) const;
     virtual int dup2(int, int) const;
     virtual int execve(const char *, char *const *argv, char *const *env) const;

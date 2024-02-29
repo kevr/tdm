@@ -8,6 +8,11 @@
 
 namespace tdm {
 
+struct passwd *Sys::getpwnam(const char *name) const
+{
+    return ::getpwnam(name);
+}
+
 struct passwd *Sys::getpwuid(uid_t uid) const
 {
     return ::getpwuid(uid);

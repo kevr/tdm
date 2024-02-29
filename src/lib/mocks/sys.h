@@ -9,6 +9,7 @@ namespace tdm {
 class MockSys : public Sys
 {
   public:
+    MOCK_METHOD(struct passwd *, getpwnam, (const char *), (const, override));
     MOCK_METHOD(struct passwd *, getpwuid, (uid_t), (const, override));
     MOCK_METHOD(int, execve, (const char *, char *const *, char *const *),
                 (const, override));
