@@ -46,6 +46,11 @@ int Sys::setegid(gid_t gid) const
     return ::setegid(gid);
 }
 
+int Sys::seteuid(uid_t uid) const
+{
+    return ::seteuid(uid);
+}
+
 int Sys::kill(pid_t pid, int sig) const
 {
     return ::kill(pid, sig);

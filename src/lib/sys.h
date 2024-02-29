@@ -26,6 +26,7 @@ class Sys
     virtual int fcntl(int, int, int) const;
     virtual pid_t fork(void) const;
     virtual int setegid(gid_t gid) const;
+    virtual int seteuid(uid_t uid) const;
     virtual int kill(pid_t pid, int sig) const;
     virtual int pipe(int fds[2]) const;
     virtual int read(int fd, void *buf, size_t count) const;
