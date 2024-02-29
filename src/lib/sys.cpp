@@ -41,6 +41,11 @@ pid_t Sys::fork(void) const
     return ::fork();
 }
 
+int Sys::setegid(gid_t gid) const
+{
+    return ::setegid(gid);
+}
+
 int Sys::kill(pid_t pid, int sig) const
 {
     return ::kill(pid, sig);
