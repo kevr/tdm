@@ -6,13 +6,16 @@
 #include <unistd.h>
 
 namespace tdm {
+
+std::string getenv(const char *var, const std::string &def)
+{
+    char *result = ::getenv(var);
+    return result != nullptr ? result : def;
+}
+
 std::string xdg_data_home(const User &user)
 {
-    const char *path = getenv("XDG_DATA_HOME");
-    if (path) {
-        return path;
-    }
-
-    return fmt::format("{}/.local/share", user.home());
+    return getenv("XDG_DATA_HOME", fmt::format("{}/.local/share", user.home()));
 }
+
 } // namespace tdm

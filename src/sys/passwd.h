@@ -4,6 +4,7 @@
 
 #include "../freedesktop/desktop.h"
 #include "../util/str.h"
+#include <optional>
 #include <pwd.h>
 #include <string>
 #include <unistd.h>
@@ -15,13 +16,14 @@ class User
 {
   private:
     std::string m_name;
-    uid_t m_uid;
-    gid_t m_gid;
+    std::optional<uid_t> m_uid;
+    gid_t m_gid = 0;
     std::string m_home;
     std::string m_shell;
 
   public:
     User(uid_t uid);
+    User(const std::string &name);
     User(const User &o);
     User(User &&o);
 

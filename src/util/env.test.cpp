@@ -9,7 +9,7 @@ using namespace tdm;
 class EnvTest : public testing::Test
 {
   protected:
-    User me = User(getuid()).populate();
+    User me = User(0).populate();
 
   public:
     void TearDown(void)
@@ -21,7 +21,7 @@ class EnvTest : public testing::Test
 TEST_F(EnvTest, xdg_data_home)
 {
     std::string home = getenv("HOME");
-    EXPECT_EQ(tdm::xdg_data_home(me), fmt::format("{}/.local/share", home));
+    EXPECT_EQ(tdm::xdg_data_home(me), "/root/.local/share");
 }
 
 TEST_F(EnvTest, xdg_data_home_set)

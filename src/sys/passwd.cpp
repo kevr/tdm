@@ -21,6 +21,10 @@ User::User(uid_t uid) : m_uid(uid)
 {
 }
 
+User::User(const std::string &name) : m_name(name)
+{
+}
+
 User::User(const User &o)
 {
     operator=(o);
@@ -58,7 +62,7 @@ const std::string &User::name(void) const
 
 uid_t User::uid(void) const
 {
-    return m_uid;
+    return m_uid.value();
 }
 
 gid_t User::gid(void) const
@@ -108,16 +112,25 @@ std::vector<DesktopFile> User::desktop_files(void)
 
 User &User::populate(void)
 {
-    auto *passwd = sys->getpwuid(uid());
-    if (!passwd) {
-        throw std::invalid_argument(
-            fmt::format("unable to lookup uid {}", uid()));
+    struct passwd *pwd = m_uid.has_value() ? sys->getpwuid(uid())
+                                           : sys->getpwnam(name().c_str());
+
+    if (!pwd) {
+        std::string msg("unable to lookup user with ");
+        if (m_uid.has_value()) {
+            msg.append(fmt::format("uid = {}", uid()));
+        } else {
+            msg.append(fmt::format("name = '{}'", name()));
+        }
+
+        throw std::invalid_argument(msg);
     }
 
-    m_name = passwd->pw_name;
-    m_gid = passwd->pw_gid;
-    m_home = passwd->pw_dir;
-    m_shell = passwd->pw_shell;
+    m_name = pwd->pw_name;
+    m_uid = pwd->pw_uid;
+    m_gid = pwd->pw_gid;
+    m_home = pwd->pw_dir;
+    m_shell = pwd->pw_shell;
     return *this;
 }
 

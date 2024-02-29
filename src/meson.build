@@ -9,7 +9,9 @@ sources = [
   'io/socket/stream.cpp',
   'io/socket/nonblocking_stream.cpp',
   'lib/curses.cpp',
+  'lib/pam.cpp',
   'lib/sys.cpp',
+  'pam/session.cpp',
   'sys/passwd.cpp',
   'sys/process.cpp',
   'util/argparse.cpp',
@@ -54,6 +56,7 @@ subdir('util')
 subdir('sys')
 subdir('freedesktop')
 subdir('io')
+subdir('pam')
 
 # tests
 if not get_option('disable_tests')

@@ -2,9 +2,30 @@ Testing
 -------
 
 The project maintains a set of unit tests included in the meson build
-by default. It can be finely tuned for test or production purposes,
-see [build configuration](#configuring-meson) on top of
-[meson built-in options](https://mesonbuild.com/Builtin-options.html).
+by default. Its build configuration can be finely tuned for test or
+production purposes, see [build configuration](#configuring-meson)
+on top of [meson built-in options](https://mesonbuild.com/Builtin-options.html).
+
+### System Prerequisites
+
+- Setup an unprivileged testing environment for PAM
+    - [Create the test user](#create-the-tdm_test-user)
+        - Required for E2E pam tests
+    - [Add testing user to the shadow group](#add-testing-user-to-the-shadow-group)
+        - Required for E2E pam tests
+
+#### Create the tdm_test user
+
+<small>Depends on `mkpasswd` from the `whois` package</small>
+
+    # useradd -p "$(echo -n tdm_test | mkpasswd -m sha-512 -s)" -s "/usr/bin/bash" -m tdm_test
+
+#### Add testing user to the shadow group
+
+The executing user needs to be able to read `/etc/shadow` for pam
+authentication to be possible:
+
+    $ sudo gpasswd -a $(whoami) shadow
 
 ### Build Configuration
 
