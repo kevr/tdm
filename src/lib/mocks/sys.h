@@ -6,6 +6,7 @@
 #include <gmock/gmock.h>
 
 namespace tdm {
+
 class MockSys : public Sys
 {
   public:
