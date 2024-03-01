@@ -13,7 +13,7 @@ class Session
 {
   private:
     // /etc/pam.d/login
-    static constexpr const char *_PAM_SERVICE = "login";
+    static constexpr const char *_PAM_SERVICE = "tdm-login";
 
   private:
     Logger logger{"PAM"};

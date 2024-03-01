@@ -33,7 +33,7 @@ tasks:
       cd tdm
       meson setup -Ddisable_bin=true -Db_coverage=true build
       ninja -j $(nproc) -C build
-      fakeroot ninja -C build test
+      PAM_CONFDIR=$(pwd)/pam.d fakeroot ninja -C build test
   - coverage: |
       cd tdm
       ninja -C build coverage-text

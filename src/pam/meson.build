@@ -3,5 +3,6 @@ if not get_option('disable_tests')
     'session.test.cpp',
     cpp_args : test_flags,
     dependencies : test_deps)
-  test('pam_session test', pam_session_test)
+  test('pam_session test', pam_session_test,
+    env : test_env)
 endif
