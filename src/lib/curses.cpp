@@ -7,6 +7,11 @@ WINDOW *Curses::initscr(void) const
     return ::initscr();
 }
 
+int Curses::cbreak(void) const
+{
+    return ::cbreak();
+}
+
 int Curses::refresh(void) const
 {
     return ::refresh();

@@ -8,6 +8,11 @@ WINDOW *initscr(void)
     return &root;
 }
 
+int cbreak(void)
+{
+    return F_OK;
+}
+
 int refresh(void)
 {
     return F_OK;

@@ -20,6 +20,7 @@ class Curses
   public:
     // Globals
     virtual WINDOW *initscr(void) const;
+    virtual int cbreak(void) const;
     virtual int refresh(void) const;
     virtual int clear(void) const;
     virtual int endwin(void) const;
