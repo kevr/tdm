@@ -1,11 +1,9 @@
 // SPDX-License-Identifier: MIT
 #include "curses.h"
 
-static WINDOW root;
-
 WINDOW *initscr(void)
 {
-    return &root;
+    return stdscr;
 }
 
 int cbreak(void)

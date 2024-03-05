@@ -2,6 +2,8 @@
 #ifndef STUBS_CURSES_H
 #define STUBS_CURSES_H
 
+#include <vector>
+
 #define F_OK 0
 
 struct WINDOW
@@ -9,6 +11,9 @@ struct WINDOW
 
 #define TRUE 1
 #define FALSE 0
+
+inline WINDOW root_window;
+inline WINDOW *stdscr = &root_window;
 
 WINDOW *initscr(void);
 int cbreak(void);
