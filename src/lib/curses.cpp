@@ -12,6 +12,11 @@ int Curses::cbreak(void) const
     return ::cbreak();
 }
 
+int Curses::noecho(void) const
+{
+    return ::noecho();
+}
+
 int Curses::refresh(void) const
 {
     return ::refresh();

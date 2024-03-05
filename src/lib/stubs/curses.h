@@ -9,6 +9,7 @@ struct WINDOW
 
 WINDOW *initscr(void);
 int cbreak(void);
+int noecho(void);
 int refresh(void);
 int clear(void);
 int endwin(void);
