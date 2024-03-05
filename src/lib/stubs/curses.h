@@ -7,6 +7,9 @@
 struct WINDOW
 {};
 
+#define TRUE 1
+#define FALSE 0
+
 WINDOW *initscr(void);
 int cbreak(void);
 int noecho(void);
