@@ -17,6 +17,11 @@ int Curses::noecho(void) const
     return ::noecho();
 }
 
+int Curses::keypad(WINDOW *win, bool enabled) const
+{
+    return ::keypad(win, enabled);
+}
+
 int Curses::refresh(void) const
 {
     return ::refresh();

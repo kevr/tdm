@@ -18,6 +18,11 @@ int noecho(void)
     return F_OK;
 }
 
+int keypad(WINDOW *, int)
+{
+    return F_OK;
+}
+
 int refresh(void)
 {
     return F_OK;

@@ -10,6 +10,7 @@ struct WINDOW
 WINDOW *initscr(void);
 int cbreak(void);
 int noecho(void);
+int keypad(WINDOW *, int);
 int refresh(void);
 int clear(void);
 int endwin(void);

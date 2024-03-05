@@ -22,6 +22,7 @@ class Curses
     virtual WINDOW *initscr(void) const;
     virtual int cbreak(void) const;
     virtual int noecho(void) const;
+    virtual int keypad(WINDOW *, bool) const;
     virtual int refresh(void) const;
     virtual int clear(void) const;
     virtual int endwin(void) const;
