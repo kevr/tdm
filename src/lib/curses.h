@@ -18,10 +18,11 @@ class Curses
     virtual ~Curses(void) = default;
 
   public:
-    WINDOW *initscr(void) const;
-    int refresh(void) const;
-    int clear(void) const;
-    int endwin(void) const;
+    // Globals
+    virtual WINDOW *initscr(void) const;
+    virtual int refresh(void) const;
+    virtual int clear(void) const;
+    virtual int endwin(void) const;
 };
 
 inline Singleton<Curses> curses;
