@@ -36,3 +36,29 @@ int Curses::endwin(void) const
 {
     return ::endwin();
 }
+
+WINDOW *Curses::derwin(WINDOW *orig, int nlines, int ncols, int begin_y,
+                       int begin_x) const
+{
+    return ::derwin(orig, nlines, ncols, begin_y, begin_x);
+}
+
+int Curses::wclear(WINDOW *win) const
+{
+    return ::wclear(win);
+}
+
+int Curses::werase(WINDOW *win) const
+{
+    return ::werase(win);
+}
+
+int Curses::wrefresh(WINDOW *win) const
+{
+    return ::wrefresh(win);
+}
+
+int Curses::delwin(WINDOW *win) const
+{
+    return ::delwin(win);
+}

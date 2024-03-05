@@ -26,6 +26,14 @@ class Curses
     virtual int refresh(void) const;
     virtual int clear(void) const;
     virtual int endwin(void) const;
+
+    // Windows
+    virtual WINDOW *derwin(WINDOW *orig, int nlines, int ncols, int begin_y,
+                           int begin_x) const;
+    virtual int wclear(WINDOW *win) const;
+    virtual int werase(WINDOW *win) const;
+    virtual int wrefresh(WINDOW *win) const;
+    virtual int delwin(WINDOW *win) const;
 };
 
 inline Singleton<Curses> curses;
