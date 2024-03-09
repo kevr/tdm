@@ -123,7 +123,7 @@ pid_t Process::start(void)
     create_pipe(m_stdout_fd);
     create_pipe(m_stderr_fd);
 
-    m_pid = sys->fork();
+    m_pid = lib::sys->fork();
     if (m_pid == -1) {
         // Error
         close();
@@ -143,14 +143,14 @@ pid_t Process::start(void)
     ::close(m_stdout_fd[0]), ::close(m_stderr_fd[0]);
 
     // Redirect std(out|err) to m_std(out|err)_fd[1]
-    sys->dup2(m_stdout_fd[1], STDOUT_FILENO);
-    sys->dup2(m_stderr_fd[1], STDERR_FILENO);
+    lib::sys->dup2(m_stdout_fd[1], STDOUT_FILENO);
+    lib::sys->dup2(m_stderr_fd[1], STDERR_FILENO);
 
     auto argv = to_argv(m_args);
     argv.insert(argv.begin(), m_binary.data());
     auto env = to_argv(m_env);
 
-    if (sys->execve(binary_path.c_str(), argv.data(), env.data()) == -1) {
+    if (lib::sys->execve(binary_path.c_str(), argv.data(), env.data()) == -1) {
         logger.error("unable to execve {}, error = {}", m_binary,
                      strerror(errno));
     }
@@ -162,7 +162,7 @@ bool Process::kill(int sig)
     int rc = -1;
     if (m_started) {
         close();
-        rc = sys->kill(m_pid, sig);
+        rc = lib::sys->kill(m_pid, sig);
         m_pid = 0;
         m_started = false;
     }
@@ -173,7 +173,7 @@ Process &Process::wait(void)
 {
     int status;
     do {
-        if (sys->waitpid(m_pid, &status, 0) == -1) {
+        if (lib::sys->waitpid(m_pid, &status, 0) == -1) {
             std::string msg =
                 fmt::format("waitpid() failed, error = {}", strerror(errno));
             throw std::runtime_error(msg);
@@ -201,7 +201,7 @@ void Process::close(void)
 
 void Process::create_pipe(int *fds)
 {
-    if (sys->pipe(fds) == -1) {
+    if (lib::sys->pipe(fds) == -1) {
         throw std::runtime_error("failed to create process pipe");
     }
 }

@@ -10,11 +10,11 @@
 #include <vector>
 
 using namespace tdm;
-using lib::MockPam;
+using namespace tdm::lib;
+using namespace std::placeholders;
 using testing::_;
 using testing::Invoke;
 using testing::Return;
-using namespace std::placeholders;
 
 class SessionTest : public testing::Test
 {

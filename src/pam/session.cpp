@@ -3,10 +3,7 @@
 #include "../lib/sys.h"
 #include "../sys/passwd.h"
 #include "../util/env.h"
-#include <functional>
 #include <security/pam_appl.h>
-
-using namespace std::placeholders;
 
 namespace tdm::pam {
 
@@ -76,11 +73,11 @@ int Session::login(std::string password)
 
 int Session::masquerade(void)
 {
-    if (int rc = sys->seteuid(m_user.uid()); rc) {
+    if (int rc = lib::sys->seteuid(m_user.uid()); rc) {
         logger.error("unable to seteuid, error: {}", strerror(errno));
         return rc;
     }
-    sys->setegid(m_user.gid());
+    lib::sys->setegid(m_user.gid());
 
     logger.debug("euid = {}", geteuid());
     logger.debug("egid = {}", getegid());

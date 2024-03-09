@@ -11,7 +11,7 @@
 #include <pwd.h>
 #include <sys/types.h>
 
-namespace tdm {
+namespace tdm::lib {
 
 class Sys
 {
@@ -32,6 +32,6 @@ class Sys
 };
 
 inline Singleton<Sys> sys;
-}; // namespace tdm
+}; // namespace tdm::lib
 
 #endif /* LIB_SYS_H */

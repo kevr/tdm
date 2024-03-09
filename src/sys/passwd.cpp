@@ -112,8 +112,8 @@ std::vector<DesktopFile> User::desktop_files(void)
 
 User &User::populate(void)
 {
-    struct passwd *pwd = m_uid.has_value() ? sys->getpwuid(uid())
-                                           : sys->getpwnam(name().c_str());
+    struct passwd *pwd = m_uid.has_value() ? lib::sys->getpwuid(uid())
+                                           : lib::sys->getpwnam(name().c_str());
 
     if (!pwd) {
         std::string msg("unable to lookup user with ");

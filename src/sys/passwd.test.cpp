@@ -6,8 +6,8 @@
 #include <fstream>
 #include <gtest/gtest.h>
 
-using tdm::sys;
-using tdm::User;
+using namespace tdm;
+using namespace tdm::lib;
 using testing::_;
 using testing::Return;
 using testing::internal::CaptureStdout;
@@ -16,13 +16,13 @@ using testing::internal::GetCapturedStdout;
 class PasswdTest : public testing::Test
 {
   protected:
-    std::shared_ptr<tdm::MockSys> m_sys;
+    std::shared_ptr<MockSys> m_sys;
     std::string tmpdir = "/tmp/tdm-XXXXXX";
 
   public:
     void SetUp(void)
     {
-        m_sys = std::make_shared<tdm::MockSys>();
+        m_sys = std::make_shared<MockSys>();
         sys.set(m_sys);
 
         mkdtemp(tmpdir.data());

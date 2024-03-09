@@ -5,7 +5,7 @@
 #include "../sys.h"
 #include <gmock/gmock.h>
 
-namespace tdm {
+namespace tdm::lib {
 
 class MockSys : public Sys
 {
@@ -24,6 +24,6 @@ class MockSys : public Sys
     MOCK_METHOD(int, waitpid, (pid_t, int *, int), (override));
 };
 
-} // namespace tdm
+} // namespace tdm::lib
 
 #endif /* LIB_MOCKS_SYS_H */

@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: MIT
 #include "curses.h"
-using namespace tdm;
+
+namespace tdm::lib {
 
 WINDOW *Curses::initscr(void)
 {
@@ -62,3 +63,5 @@ int Curses::delwin(WINDOW *win)
 {
     return ::delwin(win);
 }
+
+} // namespace tdm::lib

@@ -62,9 +62,9 @@ int NonBlockingStream::readsome(void)
 {
     char buf[BUFFER_LEN];
 
-    int bytes = sys->read(m_fd, buf, BUFFER_LEN - 1);
+    int bytes = lib::sys->read(m_fd, buf, BUFFER_LEN - 1);
     while (bytes == -1 && errno == EAGAIN) {
-        bytes = sys->read(m_fd, buf, BUFFER_LEN - 1);
+        bytes = lib::sys->read(m_fd, buf, BUFFER_LEN - 1);
     }
 
     return handle_read(buf, bytes);
@@ -72,7 +72,7 @@ int NonBlockingStream::readsome(void)
 
 int NonBlockingStream::fcntl(int fd, int cmd, int arg)
 {
-    int result = sys->fcntl(fd, cmd, arg);
+    int result = lib::sys->fcntl(fd, cmd, arg);
     if (result == -1) {
         std::string message =
             fmt::format("fcntl failed with error = {}", strerror(errno));

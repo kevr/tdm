@@ -4,6 +4,7 @@
 #include <gtest/gtest.h>
 
 using namespace tdm;
+using namespace tdm::lib;
 using namespace std::placeholders;
 using testing::_;
 using testing::Invoke;

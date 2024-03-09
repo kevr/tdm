@@ -5,7 +5,7 @@
 #include "../singleton.h"
 #include <curses.h>
 
-namespace tdm {
+namespace tdm::lib {
 
 class Curses
 {
@@ -31,6 +31,6 @@ class Curses
 };
 
 inline Singleton<Curses> curses;
-} // namespace tdm
+} // namespace tdm::lib
 
 #endif /* LIB_CURSES_H */

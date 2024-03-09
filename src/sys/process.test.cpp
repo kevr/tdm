@@ -1,12 +1,10 @@
 // SPDX-License-Identifier: MIT
 #include "process.h"
-#include "../io/io.h"
 #include "../lib/mocks/sys.h"
-#include "../util/container.h"
-#include "../util/termio.h"
 #include <gtest/gtest.h>
 
 using namespace tdm;
+using namespace tdm::lib;
 using namespace std::placeholders;
 using testing::_;
 using testing::Invoke;

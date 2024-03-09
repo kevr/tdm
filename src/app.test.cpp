@@ -7,6 +7,7 @@
 #include <memory>
 
 using namespace tdm;
+using namespace tdm::lib;
 using testing::_;
 using testing::Return;
 

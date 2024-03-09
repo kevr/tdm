@@ -6,7 +6,7 @@
 #include <sys/wait.h>
 #include <unistd.h>
 
-namespace tdm {
+namespace tdm::lib {
 
 struct passwd *Sys::getpwnam(const char *name)
 {
@@ -71,4 +71,4 @@ int Sys::waitpid(pid_t pid, int *status, int flags)
     return ::waitpid(pid, status, flags);
 }
 
-} // namespace tdm
+} // namespace tdm::lib
