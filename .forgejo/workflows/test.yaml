@@ -19,7 +19,7 @@ jobs:
       - name: Install dependencies
         run: |
           apt-get -y update
-          apt-get -y install git meson libncurses-dev libpam-dev gcovr lcov sudo clang-format-16 pkg-config whois fakeroot-ng
+          apt-get -y install git meson libncurses-dev libpam-dev gcovr lcov sudo clang-format-16 pkg-config whois fakeroot-ng xterm
 
       - name: Save cache
         run: |
@@ -52,7 +52,7 @@ jobs:
       - name: Run tests
         run: |
           sudo -u test meson setup -Ddisable_bin=true -Db_coverage=true build
-          sudo -u test fakeroot ninja -j $(nproc) -C build test
+          sudo -u test TERM=xterm-256color fakeroot ninja -j $(nproc) -C build test
 
       - name: Upload testlog.txt artifact
         uses: actions/upload-artifact@v3

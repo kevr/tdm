@@ -13,6 +13,7 @@ packages:
   - pkg-config
   - whois
   - fakeroot-ng
+  - xterm
 sources:
   - https://git.sr.ht/~kevr/tdm
 tasks:
@@ -33,7 +34,7 @@ tasks:
       cd tdm
       meson setup -Ddisable_bin=true -Db_coverage=true build
       ninja -j $(nproc) -C build
-      PAM_CONFDIR=$(pwd)/pam.d fakeroot ninja -C build test
+      PAM_CONFDIR=$(pwd)/pam.d TERM=xterm-256color fakeroot ninja -C build test
   - coverage: |
       cd tdm
       ninja -C build coverage-text
