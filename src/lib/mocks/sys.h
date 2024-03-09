@@ -10,18 +10,18 @@ namespace tdm {
 class MockSys : public Sys
 {
   public:
-    MOCK_METHOD(struct passwd *, getpwnam, (const char *), (const, override));
-    MOCK_METHOD(struct passwd *, getpwuid, (uid_t), (const, override));
+    MOCK_METHOD(struct passwd *, getpwnam, (const char *), (override));
+    MOCK_METHOD(struct passwd *, getpwuid, (uid_t), (override));
     MOCK_METHOD(int, execve, (const char *, char *const *, char *const *),
-                (const, override));
-    MOCK_METHOD(int, dup2, (int, int), (const, override));
-    MOCK_METHOD(int, fcntl, (int, int, int), (const, override));
-    MOCK_METHOD(pid_t, fork, (), (const, override));
-    MOCK_METHOD(int, setegid, (gid_t), (const, override));
-    MOCK_METHOD(int, seteuid, (uid_t), (const, override));
-    MOCK_METHOD(int, pipe, (int *), (const, override));
-    MOCK_METHOD(int, read, (int, void *, size_t), (const, override));
-    MOCK_METHOD(int, waitpid, (pid_t, int *, int), (const, override));
+                (override));
+    MOCK_METHOD(int, dup2, (int, int), (override));
+    MOCK_METHOD(int, fcntl, (int, int, int), (override));
+    MOCK_METHOD(pid_t, fork, (), (override));
+    MOCK_METHOD(int, setegid, (gid_t), (override));
+    MOCK_METHOD(int, seteuid, (uid_t), (override));
+    MOCK_METHOD(int, pipe, (int *), (override));
+    MOCK_METHOD(int, read, (int, void *, size_t), (override));
+    MOCK_METHOD(int, waitpid, (pid_t, int *, int), (override));
 };
 
 } // namespace tdm

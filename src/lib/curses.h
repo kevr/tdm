@@ -17,23 +17,22 @@ class Curses
   public:
     virtual ~Curses(void) = default;
 
-  public:
     // Globals
-    virtual WINDOW *initscr(void) const;
-    virtual int cbreak(void) const;
-    virtual int noecho(void) const;
-    virtual int keypad(WINDOW *, bool) const;
-    virtual int refresh(void) const;
-    virtual int clear(void) const;
-    virtual int endwin(void) const;
+    virtual WINDOW *initscr(void);
+    virtual int cbreak(void);
+    virtual int noecho(void);
+    virtual int keypad(WINDOW *, bool);
+    virtual int refresh(void);
+    virtual int clear(void);
+    virtual int endwin(void);
 
     // Windows
     virtual WINDOW *derwin(WINDOW *orig, int nlines, int ncols, int begin_y,
-                           int begin_x) const;
-    virtual int wclear(WINDOW *win) const;
-    virtual int werase(WINDOW *win) const;
-    virtual int wrefresh(WINDOW *win) const;
-    virtual int delwin(WINDOW *win) const;
+                           int begin_x);
+    virtual int wclear(WINDOW *win);
+    virtual int werase(WINDOW *win);
+    virtual int wrefresh(WINDOW *win);
+    virtual int delwin(WINDOW *win);
 };
 
 inline Singleton<Curses> curses;

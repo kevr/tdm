@@ -2,63 +2,63 @@
 #include "curses.h"
 using namespace tdm;
 
-WINDOW *Curses::initscr(void) const
+WINDOW *Curses::initscr(void)
 {
     return ::initscr();
 }
 
-int Curses::cbreak(void) const
+int Curses::cbreak(void)
 {
     return ::cbreak();
 }
 
-int Curses::noecho(void) const
+int Curses::noecho(void)
 {
     return ::noecho();
 }
 
-int Curses::keypad(WINDOW *win, bool enabled) const
+int Curses::keypad(WINDOW *win, bool enabled)
 {
     return ::keypad(win, enabled);
 }
 
-int Curses::refresh(void) const
+int Curses::refresh(void)
 {
     return ::refresh();
 }
 
-int Curses::clear(void) const
+int Curses::clear(void)
 {
     return ::clear();
 }
 
-int Curses::endwin(void) const
+int Curses::endwin(void)
 {
     return ::endwin();
 }
 
 WINDOW *Curses::derwin(WINDOW *orig, int nlines, int ncols, int begin_y,
-                       int begin_x) const
+                       int begin_x)
 {
     return ::derwin(orig, nlines, ncols, begin_y, begin_x);
 }
 
-int Curses::wclear(WINDOW *win) const
+int Curses::wclear(WINDOW *win)
 {
     return ::wclear(win);
 }
 
-int Curses::werase(WINDOW *win) const
+int Curses::werase(WINDOW *win)
 {
     return ::werase(win);
 }
 
-int Curses::wrefresh(WINDOW *win) const
+int Curses::wrefresh(WINDOW *win)
 {
     return ::wrefresh(win);
 }
 
-int Curses::delwin(WINDOW *win) const
+int Curses::delwin(WINDOW *win)
 {
     return ::delwin(win);
 }

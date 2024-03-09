@@ -13,11 +13,11 @@ class MockPam : public Pam
     MOCK_METHOD(int, start_confdir,
                 (const char *, const char *, const struct pam_conv *,
                  char *confdir, pam_handle_t **),
-                (const, override));
-    MOCK_METHOD(int, authenticate, (pam_handle_t *, int), (const, override));
-    MOCK_METHOD(int, open_session, (pam_handle_t *, int), (const, override));
-    MOCK_METHOD(int, close_session, (pam_handle_t *, int), (const, override));
-    MOCK_METHOD(int, end, (pam_handle_t *, int), (const, override));
+                (override));
+    MOCK_METHOD(int, authenticate, (pam_handle_t *, int), (override));
+    MOCK_METHOD(int, open_session, (pam_handle_t *, int), (override));
+    MOCK_METHOD(int, close_session, (pam_handle_t *, int), (override));
+    MOCK_METHOD(int, end, (pam_handle_t *, int), (override));
 };
 
 } // namespace tdm::lib

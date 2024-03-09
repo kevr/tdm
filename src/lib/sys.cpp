@@ -8,67 +8,67 @@
 
 namespace tdm {
 
-struct passwd *Sys::getpwnam(const char *name) const
+struct passwd *Sys::getpwnam(const char *name)
 {
     return ::getpwnam(name);
 }
 
-struct passwd *Sys::getpwuid(uid_t uid) const
+struct passwd *Sys::getpwuid(uid_t uid)
 {
     return ::getpwuid(uid);
 }
 
 // dup2/execve are never used in the main process, so coverage is excluded
 // LCOV_EXCL_START
-int Sys::dup2(int fd, int fd2) const
+int Sys::dup2(int fd, int fd2)
 {
     return ::dup2(fd, fd2);
 }
 
-int Sys::execve(const char *path, char *const *argv, char *const *env) const
+int Sys::execve(const char *path, char *const *argv, char *const *env)
 {
     return ::execve(path, argv, env);
 }
 // LCOV_EXCL_STOP
 
-int Sys::fcntl(int fd, int cmd, int arg) const
+int Sys::fcntl(int fd, int cmd, int arg)
 {
     return ::fcntl(fd, cmd, arg);
 }
 
-pid_t Sys::fork(void) const
+pid_t Sys::fork(void)
 {
     return ::fork();
 }
 
-int Sys::setegid(gid_t gid) const
+int Sys::setegid(gid_t gid)
 {
     return ::setegid(gid);
 }
 
-int Sys::seteuid(uid_t uid) const
+int Sys::seteuid(uid_t uid)
 {
     return ::seteuid(uid);
 }
 
-int Sys::kill(pid_t pid, int sig) const
+int Sys::kill(pid_t pid, int sig)
 {
     return ::kill(pid, sig);
 }
 
-int Sys::pipe(int *pipedes) const
+int Sys::pipe(int *pipedes)
 {
     return ::pipe(pipedes);
 }
 
-int Sys::read(int fd, void *buf, size_t count) const
+int Sys::read(int fd, void *buf, size_t count)
 {
     return ::read(fd, buf, count);
 }
 
-int Sys::waitpid(pid_t pid, int *status, int flags) const
+int Sys::waitpid(pid_t pid, int *status, int flags)
 {
     return ::waitpid(pid, status, flags);
 }
-// End of defs
+
 } // namespace tdm
