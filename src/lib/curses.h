@@ -3,12 +3,7 @@
 #define LIB_CURSES_H
 
 #include "../singleton.h"
-
-#ifndef TDM_TEST
 #include <curses.h>
-#else
-#include "stubs/curses.h"
-#endif
 
 namespace tdm {
 

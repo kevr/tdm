@@ -27,6 +27,7 @@ fmt_proj = subproject('fmt', default_options : 'default_library=static')
 fmt = fmt_proj.get_variable('fmt_dep')
 
 pam = dependency('pam')
+curses = dependency('curses')
 
 if not get_option('disable_tests')
   gtest_proj = subproject('gtest')
@@ -35,11 +36,9 @@ if not get_option('disable_tests')
   gmock = gtest_proj.get_variable('gmock_dep')
 
   # static lib shared between tests
-  test_sources = [
-    'lib/stubs/curses.cpp'
-  ]
+  test_sources = []
   test_flags = ['-DTDM_TEST']
-  test_lib_deps = [fmt, pam, gtest, gmock]
+  test_lib_deps = [fmt, pam, curses, gtest, gmock]
   test_lib = static_library('test_lib',
     sources : sources + test_sources,
     cpp_args : test_flags,
@@ -75,7 +74,6 @@ endif
 
 # tdm executable
 if not get_option('disable_bin')
-  curses = dependency('curses')
   tdm_lib = static_library('tdm_lib',
     sources : sources,
     dependencies : [curses, fmt])
