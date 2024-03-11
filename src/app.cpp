@@ -4,20 +4,11 @@
 #include "util/logger.h"
 #include "util/str.h"
 #include <fstream>
+#include <set>
 
 using namespace tdm;
 
 namespace tdm {
-
-App::App(void) = default;
-
-App::~App(void)
-{
-    if (m_init) {
-        lib::curses->endwin();
-        m_init = false;
-    }
-}
 
 int App::run(const std::filesystem::path &passwd_file)
 {
@@ -31,10 +22,10 @@ int App::run(const std::filesystem::path &passwd_file)
         }
     }
 
-    logger.debug("curses init = {}",
-                 (m_init = lib::curses->initscr() != nullptr));
-    logger.debug("curses clear = {}", lib::curses->clear());
-    logger.debug("curses refresh = {}", lib::curses->refresh());
+    if (int e = m_login.init(); e != 0) {
+        logger.error("{} returned {}", typeid(m_login).name(), e);
+        return e;
+    }
 
     return 0;
 }
