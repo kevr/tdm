@@ -27,6 +27,26 @@ int App::run(const std::filesystem::path &passwd_file)
         return e;
     }
 
+    static const std::set<int> error_chars{-1, 'q'};
+    int ch;
+    do {
+        ch = lib::curses->getchar();
+
+        switch (ch) {
+        case KEY_RESIZE:
+            m_login.resize();
+            m_login.draw();
+            break;
+        }
+    } while (error_chars.find(ch) == error_chars.end());
+
+    if (ch == -1) {
+        logger.error("getch() returned -1");
+        return -1;
+    } else {
+        logger.debug("user pressed 'q', quitting...");
+    }
+
     return 0;
 }
 
