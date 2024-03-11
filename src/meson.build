@@ -15,6 +15,7 @@ sources = [
   'sys/passwd.cpp',
   'sys/process.cpp',
   'tui/screen.cpp',
+  'tui/window.cpp',
   'util/argparse.cpp',
   'util/datetime.cpp',
   'util/env.cpp',
