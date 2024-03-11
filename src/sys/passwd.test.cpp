@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: MIT
 #include "passwd.h"
 #include "../lib/mocks/sys.h"
+#include "../testing.h"
 #include "../util/termio.h"
 #include "gtest/gtest.h"
 #include <fstream>
@@ -16,21 +17,17 @@ using testing::internal::GetCapturedStdout;
 class PasswdTest : public testing::Test
 {
   protected:
-    std::shared_ptr<MockSys> m_sys;
-    std::string tmpdir = "/tmp/tdm-XXXXXX";
+    std::shared_ptr<MockSys> m_sys = std::make_shared<MockSys>();
+    test::TemporaryDirectory tmpdir;
 
   public:
     void SetUp(void)
     {
-        m_sys = std::make_shared<MockSys>();
         sys.set(m_sys);
-
-        mkdtemp(tmpdir.data());
     }
 
     void TearDown(void)
     {
-        std::filesystem::remove_all(tmpdir);
         sys.reset();
     }
 };

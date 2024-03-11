@@ -1,40 +1,32 @@
 // SPDX-License-Identifier: MIT
 #include "filesystem.h"
+#include "../testing.h"
 #include <fstream>
 #include <gtest/gtest.h>
+
+using namespace tdm;
 
 class FilesystemTest : public testing::Test
 {
   protected:
-    std::string tmpdir = "/tmp/tdm-XXXXXX";
-
-  public:
-    void SetUp(void)
-    {
-        mkdtemp(tmpdir.data());
-    }
-
-    void TearDown(void)
-    {
-        std::filesystem::remove_all(tmpdir);
-    }
+    tdm::test::TemporaryDirectory tmpdir;
 };
 
 TEST_F(FilesystemTest, listdir)
 {
-    std::ofstream(tmpdir + "/test") << "";
-    std::ofstream(tmpdir + "/test.suffix") << "";
+    std::ofstream(tmpdir.path() / "test") << "";
+    std::ofstream(tmpdir.path() / "test.suffix") << "";
 
     // With no suffix provided
-    auto files = tdm::listdir(tmpdir);
+    auto files = tdm::listdir(tmpdir.c_str());
     EXPECT_EQ(files.size(), 2);
 
     // With a specified suffix
-    files = tdm::listdir(tmpdir, ".suffix");
+    files = tdm::listdir(tmpdir.c_str(), ".suffix");
     EXPECT_EQ(files.size(), 1);
 }
 
 TEST_F(FilesystemTest, listdir_empty)
 {
-    EXPECT_EQ(tdm::listdir(tmpdir).size(), 0);
+    EXPECT_EQ(tdm::listdir(tmpdir.c_str()).size(), 0);
 }

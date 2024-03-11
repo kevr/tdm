@@ -2,6 +2,7 @@
 #include "app.h"
 #include "lib/mocks/curses.h"
 #include "lib/mocks/sys.h"
+#include "testing.h"
 #include <filesystem>
 #include <fstream>
 #include <gtest/gtest.h>
@@ -20,8 +21,8 @@ class AppTest : public testing::Test
     std::shared_ptr<NiceMock<MockCurses>> m_curses =
         std::make_shared<NiceMock<MockCurses>>();
 
-    std::filesystem::path tmpdir;
-    std::filesystem::path passwd;
+    test::TemporaryDirectory tmpdir;
+    std::filesystem::path passwd = tmpdir.path() / "passwd";
 
     WINDOW root;
     WINDOW children[3];
@@ -31,11 +32,6 @@ class AppTest : public testing::Test
   public:
     void SetUp(void)
     {
-        std::string tmpfmt = "/tmp/tdm-XXXXXX";
-        mkdtemp(tmpfmt.data());
-        tmpdir = tmpfmt;
-        passwd = tmpdir / "passwd";
-
         sys.set(m_sys);
         curses.set(m_curses);
         setenv("XDG_DATA_HOME", tmpdir.c_str(), 1);
@@ -46,7 +42,6 @@ class AppTest : public testing::Test
         unsetenv("XDG_DATA_HOME");
         curses.reset();
         sys.reset();
-        std::filesystem::remove_all(tmpdir);
     }
 
   protected:

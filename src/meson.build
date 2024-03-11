@@ -39,7 +39,7 @@ if not get_option('disable_tests')
   gmock = gtest_proj.get_variable('gmock_dep')
 
   # static lib shared between tests
-  test_sources = []
+  test_sources = ['testing.cpp']
   test_flags = ['-DTDM_TEST']
   test_lib_deps = [fmt, pam, curses, gtest, gmock]
   test_lib = static_library('test_lib',

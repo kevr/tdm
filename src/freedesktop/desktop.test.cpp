@@ -2,32 +2,24 @@
 #include "desktop.h"
 #include "../except.h"
 #include "../sys/process.h"
+#include "../testing.h"
 #include <fstream>
 #include <gtest/gtest.h>
 
+using namespace tdm;
 using tdm::freedesktop::DesktopFile;
 
 class DesktopTest : public testing::Test
 {
   protected:
-    std::string tmpdir = "/tmp/tdm-XXXXXX";
+    test::TemporaryDirectory tmpdir;
     DesktopFile desktop;
 
-  public:
-    void SetUp(void)
-    {
-        mkdtemp(tmpdir.data());
-    }
-
-    void TearDown(void)
-    {
-        std::filesystem::remove_all(tmpdir);
-    }
-
+  protected:
     using Pair = std::pair<std::string, std::string>;
     std::filesystem::path write_desktop_file(std::vector<Pair> map)
     {
-        auto path = std::filesystem::path(tmpdir) / "test.desktop";
+        auto path = tmpdir.path() / "test.desktop";
         std::ofstream ofs(path.c_str(), std::ios::out);
         ofs << "[Desktop entry]\n";
         for (auto &kv : map) {
