@@ -14,6 +14,7 @@ sources = [
   'pam/session.cpp',
   'sys/passwd.cpp',
   'sys/process.cpp',
+  'tui/screen.cpp',
   'util/argparse.cpp',
   'util/datetime.cpp',
   'util/env.cpp',
@@ -56,6 +57,7 @@ subdir('sys')
 subdir('freedesktop')
 subdir('io')
 subdir('pam')
+subdir('tui')
 
 # tests
 if not get_option('disable_tests')
