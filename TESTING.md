@@ -13,6 +13,7 @@ on top of [meson built-in options](https://mesonbuild.com/Builtin-options.html).
         - Required for E2E pam tests
     - [Add testing user to the shadow group](#add-testing-user-to-the-shadow-group)
         - Required for E2E pam tests
+- fakeroot must be available and used to execute tests
 
 #### Create the tdm_test user
 
@@ -55,11 +56,11 @@ principle, as they would be putting unnecessary burdens on others.
     ## Configure a build for unit tests only with coverage data
     $ meson setup -Ddisable_bin=true -Db_coverage=true build
 
-    ## Compile tests...
+    ## Compile tests
     $ ninja -C build
 
-    ## Run tests...
-    $ ninja -C build tests
+    ## Run tests with fakeroot
+    $ fakeroot ninja -C build tests
 
     ## Generate coverage text report
     $ ninja -C build coverage-text
