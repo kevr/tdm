@@ -139,8 +139,12 @@ TEST(PamSession, non_existent_user)
     expect_login("non-existent-user", "fake", -1);
 }
 
-TEST(PamSession, test_user)
+TEST_F(SessionTest, test_user)
 {
-    // Test real unmocked real PAM implementation
+    lib::pam.reset();
+    EXPECT_CALL(*m_sys, seteuid(_)).WillOnce(Return(0));
+    EXPECT_CALL(*m_sys, setegid(_)).WillOnce(Return(0));
+
+    // Test unmocked real PAM implementation
     expect_login(TEST_USER, TEST_PASS, PAM_SUCCESS);
 }
