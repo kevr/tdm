@@ -30,7 +30,7 @@ std::filesystem::path tdm_data_dir(void)
 
 std::filesystem::path tdm_log_dir(void)
 {
-    return getuid() ? tdm_data_dir() / "tdm" : "/var/log";
+    return getuid() ? tdm_data_dir() : "/var/log";
 }
 
 } // namespace tdm
