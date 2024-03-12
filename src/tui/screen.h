@@ -22,6 +22,6 @@ class Screen : public BasicWindow<ScreenDeleter>
     std::tuple<int, int> size(void) const;
 };
 
-}
+} // namespace tdm::tui
 
 #endif /* TUI_SCREEN_H */
