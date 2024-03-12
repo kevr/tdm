@@ -32,7 +32,7 @@ test:
   stage: test
   before_script:
     - apt-get -y update
-    - apt-get -y install gcovr meson pkg-config libpam-dev whois fakeroot-ng xterm
+    - apt-get -y install gcovr meson pkg-config libpam-dev whois xterm
     - install -m666 pc/ubuntu-jammy.pam.pc /usr/lib/pkgconfig/pam.pc
     # Add tdm_test user via ci script
     - bash ci/adduser.sh
@@ -45,7 +45,7 @@ test:
 
     # Build and run tests
     - sudo -u test ninja -j $(nproc) -C build
-    - sudo -u test TERM=xterm-256color fakeroot ninja -C build test
+    - sudo -u test TERM=xterm-256color ninja -C build test
 
     # Collect test coverage
     - sudo -u test ninja -C build coverage-xml
