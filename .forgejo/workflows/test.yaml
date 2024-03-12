@@ -52,7 +52,7 @@ jobs:
       - name: Run tests
         run: |
           sudo -u test meson setup -Ddisable_bin=true -Db_coverage=true build
-          sudo -u test TERM=xterm-256color ninja -j $(nproc) -C build test
+          sudo -u test TERM=xterm-256color PAM_CONFDIR=../pam.d ninja -j $(nproc) -C build test
 
       - name: Upload testlog.txt artifact
         uses: actions/upload-artifact@v3
