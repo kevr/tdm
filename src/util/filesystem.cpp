@@ -1,8 +1,10 @@
 // SPDX-License-Identifier: MIT
 #include "filesystem.h"
+#include "../lib/sys.h"
 #include "logger.h"
 #include "str.h"
 #include <algorithm>
+#include <sys/stat.h>
 
 using std::filesystem::directory_iterator;
 
@@ -55,6 +57,40 @@ std::filesystem::path search_path(const std::string &filename)
         throw std::domain_error(msg);
     }
     return result;
+}
+
+int makedir(const std::filesystem::path &path)
+{
+    try {
+        if (!lib::sys->exists(path)) {
+            if (lib::sys->mkdir(path.c_str(), 0755) == -1) {
+                logger.error(R"(failed to create directory "{}")",
+                             path.c_str());
+                logger.debug(R"(mkdir("{}") returned -1)", path.c_str());
+                return -1;
+            } else {
+                logger.debug(R"(mkdir("{}"))", path.c_str());
+            }
+        }
+    } catch (std::exception &) {
+        logger.error(R"(unable to open "{}" for reading)", path.c_str());
+        return -1;
+    }
+
+    return 0;
+}
+
+int makedirs(const std::filesystem::path &path)
+{
+    auto segments = split(path.string(), "/");
+    std::filesystem::path current("/");
+    for (auto &seg : segments) {
+        current /= seg;
+        if (int e = makedir(current); e != 0) {
+            return e;
+        }
+    }
+    return 0;
 }
 
 } // namespace tdm

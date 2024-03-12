@@ -3,8 +3,11 @@
 #include "config.h"
 #include "lib/curses.h"
 #include "util/argparse.h"
+#include "util/env.h"
+#include "util/filesystem.h"
 #include "util/logger.h"
 #include "util/termio.h"
+#include <sys/stat.h>
 
 using namespace tdm;
 
@@ -39,18 +42,34 @@ int main(int argc, const char *argv[])
         return tdm::print("{}\n", PROJECT_VER);
     }
 
-    if (args.has("log-to")) {
-        const auto &logfile = args.get("log-to");
-        if (!logger.open(logfile)) {
-            return tdm::error(1, "unable to open '{}' for writing\n", logfile);
-        } else {
-            tdm::print("started logging to '{}'\n", logfile);
-        }
-    }
-
     // Enable verbose logging if --verbose provided
     logger.verbose(args.has("verbose"));
 
+    auto logdir = tdm_log_dir();
+    if (int e = makedirs(logdir); e != 0) {
+        return e;
+    }
+
+    auto logfile = args.has("log-to")
+                       ? std::filesystem::path(args.get("log-to"))
+                       : logdir / "tdm.log";
+
+    auto segs = split(logfile, "/");
+    segs.pop_back();
+    std::filesystem::path current("/");
+    for (auto &seg : segs) {
+        current /= seg;
+        mkdir(current.c_str(), 0755);
+    }
+
+    if (!logger.open(logfile)) {
+        return tdm::error(1, "unable to open '{}' for writing\n",
+                          logfile.c_str());
+    } else {
+        tdm::print("started logging to '{}'\n", logfile.c_str());
+    }
+
     auto app = App();
-    return app.run("/etc/passwd");
+    std::string passwd_file(tdm::getenv("TDM_PASSWD", "/etc/passwd"));
+    return app.run(passwd_file);
 }

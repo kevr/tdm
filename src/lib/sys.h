@@ -8,6 +8,7 @@
 
 #include "../singleton.h"
 #include <fcntl.h>
+#include <filesystem>
 #include <pwd.h>
 #include <sys/types.h>
 
@@ -21,11 +22,13 @@ class Sys
     virtual struct passwd *getpwuid(uid_t uid);
     virtual int dup2(int, int);
     virtual int execve(const char *, char *const *argv, char *const *env);
+    virtual bool exists(const std::filesystem::path &path);
     virtual int fcntl(int, int, int);
     virtual pid_t fork(void);
     virtual int setegid(gid_t gid);
     virtual int seteuid(uid_t uid);
     virtual int kill(pid_t pid, int sig);
+    virtual int mkdir(const char *path, mode_t mode);
     virtual int pipe(int fds[2]);
     virtual int read(int fd, void *buf, size_t count);
     virtual int waitpid(pid_t pid, int *status, int flags);

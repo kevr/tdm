@@ -58,6 +58,7 @@ subdir('util')
 subdir('sys')
 subdir('freedesktop')
 subdir('io')
+subdir('lib')
 subdir('pam')
 subdir('tui')
 

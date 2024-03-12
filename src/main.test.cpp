@@ -3,12 +3,45 @@
 #include "main.cpp"
 #undef main
 
+#include "lib/mocks/sys.h"
 #include <gtest/gtest.h>
+#include <memory>
 
+using namespace tdm::lib;
+using testing::_;
+using testing::NiceMock;
+using testing::Return;
 using testing::internal::CaptureStderr;
 using testing::internal::CaptureStdout;
 using testing::internal::GetCapturedStderr;
 using testing::internal::GetCapturedStdout;
+
+class MainTest : public testing::Test
+{
+  protected:
+    std::shared_ptr<NiceMock<MockSys>> m_sys =
+        std::make_shared<NiceMock<MockSys>>();
+
+  public:
+    void SetUp(void)
+    {
+        sys.set(m_sys);
+    }
+
+    void TearDown(void)
+    {
+        sys.reset();
+    }
+};
+
+TEST_F(MainTest, makedirs_error)
+{
+    EXPECT_CALL(*m_sys, exists(_)).WillOnce(Return(false));
+    EXPECT_CALL(*m_sys, mkdir(_, _)).WillOnce(Return(-1));
+    int argc = 1;
+    const char *argv[] = {"tdm"};
+    EXPECT_EQ(tdm_main(argc, argv), -1);
+}
 
 TEST(main, runs)
 {

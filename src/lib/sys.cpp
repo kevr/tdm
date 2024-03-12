@@ -3,6 +3,7 @@
 #include <cstdio>
 #include <fcntl.h>
 #include <pwd.h>
+#include <sys/stat.h>
 #include <sys/wait.h>
 #include <unistd.h>
 
@@ -31,6 +32,11 @@ int Sys::execve(const char *path, char *const *argv, char *const *env)
 }
 // LCOV_EXCL_STOP
 
+bool Sys::exists(const std::filesystem::path &path)
+{
+    return std::filesystem::exists(path);
+}
+
 int Sys::fcntl(int fd, int cmd, int arg)
 {
     return ::fcntl(fd, cmd, arg);
@@ -54,6 +60,11 @@ int Sys::seteuid(uid_t uid)
 int Sys::kill(pid_t pid, int sig)
 {
     return ::kill(pid, sig);
+}
+
+int Sys::mkdir(const char *path, mode_t mode)
+{
+    return ::mkdir(path, mode);
 }
 
 int Sys::pipe(int *pipedes)

@@ -32,6 +32,9 @@ std::filesystem::path search_path(const std::string &filename, bool &found);
  **/
 std::filesystem::path search_path(const std::string &filename);
 
+int makedir(const std::filesystem::path &path);
+int makedirs(const std::filesystem::path &path);
+
 // End of defs
 } // namespace tdm
 

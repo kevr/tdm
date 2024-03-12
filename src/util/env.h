@@ -8,7 +8,10 @@
 namespace tdm {
 
 std::string getenv(const char *var, const std::string &def);
+std::filesystem::path xdg_data_home(void);
 std::string xdg_data_home(const User &user);
+std::filesystem::path tdm_data_dir(void);
+std::filesystem::path tdm_log_dir(void);
 
 } // namespace tdm
 
