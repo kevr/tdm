@@ -52,8 +52,7 @@ int App::run(const std::filesystem::path &passwd_file)
 
 void App::collect_users(const std::filesystem::path &passwd_file)
 {
-    std::ifstream ifs(passwd_file);
-    m_users = get_users(ifs);
+    m_users = get_users(passwd_file);
 }
 
 } // namespace tdm

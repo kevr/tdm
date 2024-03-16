@@ -58,4 +58,10 @@ std::vector<std::string> split(const std::string &str,
     return output;
 }
 
+bool endswith(const std::string_view s, const std::string_view suffix)
+{
+    auto pos = s.size() - suffix.size();
+    return s.find(suffix, pos) != std::string::npos;
+}
+
 } // namespace tdm

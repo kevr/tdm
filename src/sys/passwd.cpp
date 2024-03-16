@@ -6,16 +6,18 @@
 #include "../util/filesystem.h"
 #include "../util/logger.h"
 #include "../util/str.h"
-#include <algorithm>
-#include <cstdint>
 #include <fmt/format.h>
-#include <fstream>
-#include <system_error>
 
 using namespace std::string_literals;
 using tdm::freedesktop::DesktopFile;
 
 namespace tdm {
+
+User::User(struct passwd *pwd)
+    : m_name(pwd->pw_name), m_uid(pwd->pw_uid), m_gid(pwd->pw_gid),
+      m_home(pwd->pw_dir), m_shell(pwd->pw_shell)
+{
+}
 
 User::User(uid_t uid) : m_uid(uid)
 {
@@ -134,37 +136,28 @@ User &User::populate(void)
     return *this;
 }
 
-std::vector<User> get_users(std::istream &passwd)
+std::vector<User> get_users(const std::filesystem::path &passwd_db)
 {
+    FILE *passwd = fopen(passwd_db.c_str(), "r");
+    if (!passwd) {
+        std::string message =
+            fmt::format(R"(fopen("{}") failed)", passwd_db.c_str());
+        throw std::runtime_error(message);
+    }
+
     std::vector<User> users;
-
-    std::string line;
-    while (std::getline(passwd, line)) {
-        line = strip(line);
-        if (!line.size())
+    struct passwd *pwd;
+    while ((pwd = fgetpwent(passwd)) != nullptr) {
+        if (pwd->pw_uid < 1000) {
             continue;
-
-        // Split line into (name, x, uid, ...)
-        auto elements = split(line, ":", 3);
-        uid_t uid = std::stoul(elements.at(2));
-
-        // Only users with uids >= 1000 are collected.
-        if (uid < 1000)
-            continue;
-
-        auto endswith = [](const std::string_view s,
-                           const std::string_view suffix) -> bool {
-            auto pos = s.size() - suffix.size();
-            return s.find(suffix, pos) != std::string::npos;
-        };
-
-        auto user = User(uid).populate();
-        const auto &sh = user.shell();
+        }
+        const char *sh = pwd->pw_shell;
         if (!(endswith(sh, "nologin") || endswith(sh, "false"))) {
-            users.emplace_back(std::move(user));
+            users.emplace_back(User(pwd));
         }
     }
 
     return users;
-}
+} // LCOV_EXCL_LINE
+
 } // namespace tdm

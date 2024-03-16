@@ -9,7 +9,8 @@ using namespace tdm;
 class EnvTest : public testing::Test
 {
   protected:
-    User me = User(0).populate();
+    uid_t uid = 0;
+    User me = User(uid).populate();
 
   public:
     void TearDown(void)

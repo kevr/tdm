@@ -22,6 +22,7 @@ class User
     std::string m_shell;
 
   public:
+    User(struct passwd *pwd);
     User(uid_t uid);
     User(const std::string &name);
     User(const User &o);
@@ -48,7 +49,7 @@ class User
     std::vector<freedesktop::DesktopFile> desktop_files(void);
 };
 
-std::vector<User> get_users(std::istream &passwd);
+std::vector<User> get_users(const std::filesystem::path &passwd_db);
 
 template <>
 struct Join<User>

@@ -89,9 +89,6 @@ class AppTest : public testing::Test
 
         pwd1 = make_passwd("test", 1000, 1000, "/home/test", "/usr/bin/bash");
         pwd2 = make_passwd("test2", 1001, 1001, "/home/test2", "/usr/bin/bash");
-        EXPECT_CALL(*m_sys, getpwuid(_))
-            .WillOnce(Return(&pwd1))
-            .WillOnce(Return(&pwd2));
 
         auto xsessions = tmpdir / "xsessions";
         mkdir(xsessions.c_str(), 0755);

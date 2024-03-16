@@ -19,6 +19,7 @@ class PasswdTest : public testing::Test
   protected:
     std::shared_ptr<MockSys> m_sys = std::make_shared<MockSys>();
     test::TemporaryDirectory tmpdir;
+    std::filesystem::path passwd_db = tmpdir.path() / "passwd";
 
   public:
     void SetUp(void)
@@ -30,51 +31,54 @@ class PasswdTest : public testing::Test
     {
         sys.reset();
     }
+
+  protected:
+    void write_passwd(const std::filesystem::path &passwd_db,
+                      const std::string_view &content)
+    {
+        std::ofstream ofs(passwd_db, std::ios::out);
+        ofs << content << "\n";
+        ofs.close();
+    }
 };
 
-TEST_F(PasswdTest, unknown_user)
+TEST_F(PasswdTest, missing_passwd_file)
 {
-    EXPECT_CALL(*m_sys, getpwuid(_)).WillOnce(Return(nullptr));
-    std::stringstream ss;
-    ss << "username:x:1000:1000\n";
-    EXPECT_THROW(tdm::get_users(ss), std::invalid_argument);
+    EXPECT_THROW(tdm::get_users(tmpdir.path() / "passwd"), std::runtime_error);
 }
 
-struct passwd make_passwd(const char *name, gid_t gid, const char *home,
-                          const char *shell)
+TEST_F(PasswdTest, uid_fails)
 {
-    struct passwd pwd;
-    memset(&pwd, 0, sizeof(pwd));
-    pwd.pw_name = const_cast<char *>(name);
-    pwd.pw_gid = gid;
-    pwd.pw_dir = const_cast<char *>(home);
-    pwd.pw_shell = const_cast<char *>(shell);
-    return pwd;
+    EXPECT_CALL(*m_sys, getpwuid(_)).WillOnce(Return(nullptr));
+    uid_t uid = 0;
+    EXPECT_THROW(User(uid).populate(), std::invalid_argument);
+}
+
+TEST_F(PasswdTest, missing_segments)
+{
+    // TODO: Do these checks properly within get_users and throw if validation
+    // fails
+    write_passwd(passwd_db, "username:x:1000:1000");
+    auto users = tdm::get_users(tmpdir.path() / "passwd");
+    EXPECT_EQ(users.size(), 1);
+    EXPECT_EQ(users[0].name(), "username");
+    EXPECT_EQ(users[0].uid(), 1000);
+    EXPECT_EQ(users[0].gid(), 1000);
+    EXPECT_EQ(users[0].home(), "");
+    EXPECT_EQ(users[0].shell(), "");
 }
 
 TEST_F(PasswdTest, user)
 {
-    struct passwd pwd =
-        make_passwd("test", 1000, "/home/test", "/usr/bin/bash");
-    struct passwd pwd2 =
-        make_passwd("test2", 1001, "/home/test2", "/usr/bin/nologin");
-    struct passwd pwd3 =
-        make_passwd("test3", 1002, "/home/test3", "/usr/bin/false");
+    write_passwd(passwd_db, R"(
+noop:x:999:999::/:/usr/bin/nologin
+test:x:1000:1000::/home/test:/usr/bin/bash
+test2:x:1001:1001::/home/test2:/usr/bin/bash
+test3:x:1002:1002::/home/test3:/usr/bin/bash
+)");
 
-    EXPECT_CALL(*m_sys, getpwuid(_))
-        .WillOnce(Return(&pwd))
-        .WillOnce(Return(&pwd2))
-        .WillOnce(Return(&pwd3));
-    std::stringstream ss;
-    ss << R"(
-noop:x:999:...
-test:x:1000:...
-test2:x:1001:...
-test3:x:1002:...
-)";
-
-    auto users = tdm::get_users(ss);
-    EXPECT_EQ(users.size(), 1);
+    auto users = tdm::get_users(tmpdir.path() / "passwd");
+    EXPECT_EQ(users.size(), 3);
 
     auto &test = users.at(0);
     EXPECT_EQ(test.name(), "test");
@@ -123,13 +127,6 @@ TEST_F(PasswdTest, skips_invalid_desktop_file)
     EXPECT_NE(output.find("malformed line"), std::string::npos);
 
     unsetenv("XDG_DATA_HOME");
-}
-
-TEST(passwd, malformed_passwd_file)
-{
-    std::stringstream ss;
-    ss << "abc:def\n";
-    EXPECT_THROW(tdm::get_users(ss), std::out_of_range);
 }
 
 TEST(passwd, root_user)

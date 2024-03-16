@@ -16,6 +16,7 @@ std::string &strip(std::string &str);
 std::vector<std::string> split(const std::string &str,
                                const std::string &delimiter,
                                std::size_t max_splits = 0);
+bool endswith(const std::string_view s, const std::string_view suffix);
 
 template <typename T = std::string>
 struct Join
