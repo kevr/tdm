@@ -31,7 +31,7 @@ fmt_proj = subproject('fmt', default_options : 'default_library=static')
 fmt = fmt_proj.get_variable('fmt_dep')
 
 pam = dependency('pam')
-curses = dependency('curses')
+curses = dependency('ncursesw')
 
 if not get_option('disable_tests')
   gtest_proj = subproject('gtest')
