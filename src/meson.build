@@ -11,6 +11,7 @@ sources = [
   'lib/curses.cpp',
   'lib/pam.cpp',
   'lib/sys.cpp',
+  'lib/term.cpp',
   'pam/session.cpp',
   'sys/passwd.cpp',
   'sys/process.cpp',
