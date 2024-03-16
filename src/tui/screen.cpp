@@ -28,6 +28,7 @@ int Screen::init(void)
 {
     using lib::curses;
 
+    setlocale(LC_ALL, "");
     auto win = curses->initscr();
     if (!win)
         return ERR;
