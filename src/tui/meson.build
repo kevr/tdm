@@ -10,4 +10,10 @@ if not get_option('disable_tests')
     cpp_args : test_flags,
     dependencies : test_deps)
   test('screen test', screen_test)
+
+  color_test = executable('color_test',
+    'color.test.cpp',
+    cpp_args : test_flags,
+    dependencies : test_deps)
+  test('color test', color_test)
 endif

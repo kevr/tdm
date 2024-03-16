@@ -25,7 +25,7 @@ class AppTest : public testing::Test
     std::filesystem::path passwd = tmpdir.path() / "passwd";
 
     WINDOW root;
-    WINDOW children[3];
+    WINDOW child;
 
     struct passwd pwd1, pwd2;
 
@@ -48,14 +48,14 @@ class AppTest : public testing::Test
     void mock_initscr(void)
     {
         EXPECT_CALL(*m_curses, initscr()).WillOnce(Return(&root));
+        EXPECT_CALL(*m_curses, endwin()).WillOnce(Return(OK));
     }
 
     void mock_derwin(void)
     {
         EXPECT_CALL(*m_curses, derwin(_, _, _, _, _))
-            .WillOnce(Return(&children[0]))
-            .WillOnce(Return(&children[1]))
-            .WillOnce(Return(&children[2]));
+            .WillRepeatedly(Return(&child));
+        EXPECT_CALL(*m_curses, delwin(_)).WillRepeatedly(Return(OK));
     }
 
     void mock_getchar(void)
@@ -131,12 +131,7 @@ TEST_F(AppTest, KEY_RESIZE)
 
     mock_initscr();
     EXPECT_CALL(*m_curses, derwin(_, _, _, _, _))
-        .WillOnce(Return(&children[0]))
-        .WillOnce(Return(&children[1]))
-        .WillOnce(Return(&children[2]))
-        .WillOnce(Return(&children[0]))
-        .WillOnce(Return(&children[1]))
-        .WillOnce(Return(&children[2]));
+        .WillRepeatedly(Return(&child));
     EXPECT_CALL(*m_curses, getchar())
         .WillOnce(Return(KEY_RESIZE))
         .WillOnce(Return('q'));

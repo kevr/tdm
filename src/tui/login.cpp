@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: MIT
 #include "login.h"
+#include "color.h"
 #include "lib/curses.h"
 #include <functional>
 
@@ -22,13 +23,23 @@ int Login::init(void)
         return e;
     }
 
+    m_box.on_draw([](auto &w) -> int {
+        if (int e = w.box(); e != OK) {
+            return ERR;
+        }
+        w.color_enable(ColorPair::GREEN);
+        lib::curses->wmove(w.handle(), 0, 2);
+        w.addstring(" Hello, color! ");
+        w.color_disable(ColorPair::GREEN);
+        w.refresh();
+        return OK;
+    });
+
     auto draw_box = [](auto &w) {
-        if (int e = w.box(); e != 0)
-            return e;
+        w.background(ColorPair::IDLE_HIGHLIGHT);
         w.refresh();
         return 0;
     };
-    m_box.on_draw(draw_box);
     m_power.on_draw(draw_box);
     m_desktop.on_draw(draw_box);
 

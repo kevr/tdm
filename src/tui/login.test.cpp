@@ -19,7 +19,7 @@ class TuiLoginTest : public testing::Test
         std::make_shared<NiceMock<MockCurses>>();
 
     WINDOW root;
-    WINDOW children[3];
+    WINDOW child;
 
   public:
     void SetUp(void)
@@ -36,14 +36,13 @@ class TuiLoginTest : public testing::Test
     void mock_initscr(void)
     {
         EXPECT_CALL(*m_curses, initscr()).WillOnce(Return(&root));
+        EXPECT_CALL(*m_curses, endwin()).WillOnce(Return(OK));
     }
 
     void mock_derwin(void)
     {
         EXPECT_CALL(*m_curses, derwin(_, _, _, _, _))
-            .WillOnce(Return(&children[0]))
-            .WillOnce(Return(&children[1]))
-            .WillOnce(Return(&children[2]));
+            .WillRepeatedly(Return(&child));
     }
 };
 

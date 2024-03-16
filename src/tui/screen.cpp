@@ -1,6 +1,8 @@
 // SPDX-License-Identifier: MIT
 #include "screen.h"
+#include "../lib/term.h"
 #include "../util/logger.h"
+#include "color.h"
 #include <fmt/format.h>
 
 namespace tdm::tui {
@@ -32,8 +34,12 @@ int Screen::init(void)
     auto win = curses->initscr();
     if (!win)
         return ERR;
-
     m_window.reset(win);
+
+    if (int e = init_color(m_colors); e != OK) {
+        return e;
+    }
+
     curses->cbreak();
     curses->noecho();
     curses->keypad(BasicWindow::handle(), TRUE);

@@ -20,6 +20,8 @@ class MockCurses : public Curses
     MOCK_METHOD(int, getchar, (), (override));
     MOCK_METHOD(int, endwin, (), (override));
 
+    MOCK_METHOD(int, waddstring, (WINDOW *, const char *), (override));
+
     MOCK_METHOD(WINDOW *, derwin, (WINDOW *, int, int, int, int), (override));
     MOCK_METHOD(int, werase, (WINDOW *), (override));
     MOCK_METHOD(int, wrefresh, (WINDOW *), (override));
@@ -28,6 +30,9 @@ class MockCurses : public Curses
                  chtype, chtype),
                 (override));
     MOCK_METHOD(int, delwin, (WINDOW *), (override));
+
+    MOCK_METHOD(bool, has_colors, (), (override));
+    MOCK_METHOD(int, start_color, (), (override));
 };
 
 } // namespace tdm::lib

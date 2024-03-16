@@ -47,9 +47,29 @@ class BasicWindow
         return lib::curses->werase(m_window.get());
     }
 
+    int addstring(const char *str)
+    {
+        return lib::curses->waddstring(m_window.get(), str);
+    }
+
     int box(void)
     {
         return lib::curses->wbox(m_window.get());
+    }
+
+    int background(short color_pair)
+    {
+        return lib::curses->wbkgd(m_window.get(), COLOR_PAIR(color_pair));
+    }
+
+    int color_enable(short color_pair)
+    {
+        return lib::curses->color_enable(m_window.get(), color_pair);
+    }
+
+    int color_disable(short color_pair)
+    {
+        return lib::curses->color_disable(m_window.get(), color_pair);
     }
 
     int refresh(void)

@@ -15,6 +15,7 @@ sources = [
   'pam/session.cpp',
   'sys/passwd.cpp',
   'sys/process.cpp',
+  'tui/color.cpp',
   'tui/login.cpp',
   'tui/screen.cpp',
   'tui/window.cpp',

@@ -78,6 +78,11 @@ WINDOW *Curses::derwin(WINDOW *orig, int nlines, int ncols, int begin_y,
     return ::derwin(orig, nlines, ncols, begin_y, begin_x);
 }
 
+int Curses::waddstring(WINDOW *win, const char *str)
+{
+    return ::waddstr(win, str);
+}
+
 int Curses::werase(WINDOW *win)
 {
     return ::werase(win);
@@ -104,6 +109,56 @@ int Curses::wrefresh(WINDOW *win)
 int Curses::delwin(WINDOW *win)
 {
     return ::delwin(win);
+}
+
+int Curses::start_color(void)
+{
+    return ::start_color();
+}
+
+int Curses::use_default_colors(void)
+{
+    return ::use_default_colors();
+}
+
+int Curses::init_pair(short pair, short f, short b)
+{
+    return ::init_pair(pair, f, b);
+}
+
+bool Curses::has_colors(void)
+{
+    return ::has_colors();
+}
+
+int Curses::attribute_on(WINDOW *win, chtype attr)
+{
+    return wattron(win, attr);
+}
+
+int Curses::attribute_off(WINDOW *win, chtype attr)
+{
+    return wattroff(win, attr);
+}
+
+int Curses::color_enable(WINDOW *win, short pair)
+{
+    return attribute_on(win, COLOR_PAIR(pair));
+}
+
+int Curses::color_disable(WINDOW *win, short pair)
+{
+    return attribute_off(win, COLOR_PAIR(pair));
+}
+
+int Curses::wbkgd(WINDOW *win, chtype ch)
+{
+    return ::wbkgd(win, ch);
+}
+
+int Curses::wmove(WINDOW *win, int y, int x)
+{
+    return ::wmove(win, y, x);
 }
 
 } // namespace tdm::lib
